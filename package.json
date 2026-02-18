@@ -1,5 +1,5 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "carrernavigator",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -86,5 +86,17 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
-  }
+  },
+  "description": "**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID",
+  "main": "eslint.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prakhar0808/career-navigator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prakhar0808/career-navigator/issues"
+  },
+  "homepage": "https://github.com/Prakhar0808/career-navigator#readme"
 }

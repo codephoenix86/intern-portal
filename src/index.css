@@ -130,6 +130,15 @@
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
   }
+  .carousel-track {
+  display: flex;
+  animation: scrollX 25s linear infinite;
+}
+
+@keyframes scrollX {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 }
 
 @keyframes fadeUp {
@@ -146,4 +155,44 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+@keyframes slideImages {
+  0% { opacity: 1; }
+  33% { opacity: 0; }
+  66% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideImagesDelayed {
+  0% { opacity: 0; }
+  33% { opacity: 1; }
+  66% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+.animate-slide {
+  animation: slideImages 12s infinite;
+}
+
+.animate-slide-delayed {
+  animation: slideImagesDelayed 12s infinite;
+}
+/* Auto horizontal scroll */
+.auto-scroll {
+  display: flex;
+  gap: 1.5rem;
+  animation: scrollLeft 25s linear infinite;
+}
+
+.auto-scroll:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }

@@ -158,38 +158,51 @@ const Index = () => {
 <section className="py-20 bg-muted/30 overflow-hidden">
   <div className="max-w-7xl mx-auto px-4">
     <h2 className="text-3xl font-bold mb-12 flex items-center gap-2">
-      Trending Now
-      <span className="text-primary">📈</span>
+      Trending Now <span className="text-primary">📈</span>
     </h2>
 
-    <div className="overflow-hidden">
-      <div className="auto-scroll w-max">
+    <div className="relative overflow-hidden">
 
-        {/* Card 1 */}
-        <div className="min-w-[360px] bg-gradient-to-br from-primary to-accent text-white rounded-2xl p-6 shadow-xl hover:scale-105 transition">
-          <h3 className="text-xl font-bold mb-2">Placement Courses with AI</h3>
-          <p className="text-sm opacity-90 mb-4">Get placed at Amazon, Flipkart, Samsung and 200+ companies.</p>
-          <Button variant="secondary">Know More</Button>
-        </div>
+  {/* Left Fade */}
+  <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-muted/80 to-transparent z-10 pointer-events-none" />
 
-        {/* Card 2 */}
-        <div className="min-w-[360px] bg-white rounded-2xl p-6 shadow-xl hover:scale-105 transition">
-          <h3 className="text-xl font-bold text-foreground mb-2">GenZ Career Masterclass</h3>
-          <p className="text-sm text-muted-foreground mb-4">Attend, Get Assessed, Get Certified.</p>
-          <Button>Register Now</Button>
-        </div>
+  {/* Right Fade */}
+  <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-muted/80 to-transparent z-10 pointer-events-none" />
 
-        {/* Card 3 */}
-        <div className="min-w-[360px] bg-gradient-to-br from-accent to-primary text-white rounded-2xl p-6 shadow-xl hover:scale-105 transition">
-          <h3 className="text-xl font-bold mb-2">Special College Offer</h3>
-          <p className="text-sm opacity-90 mb-4">Flat 80% OFF on all online trainings.</p>
-          <Button variant="secondary">Know More</Button>
-        </div>
+  <div className="auto-scroll flex">
 
-        {/* Duplicate cards for infinite effect */}
-        <div className="min-w-[360px] bg-gradient-to-br from-primary to-accent text-white rounded-2xl p-6 shadow-xl" />
-        <div className="min-w-[360px] bg-white rounded-2xl p-6 shadow-xl" />
-        <div className="min-w-[360px] bg-gradient-to-br from-accent to-primary text-white rounded-2xl p-6 shadow-xl" />
+        {[1, 2].map((_, index) => (
+          <div key={index} className="flex gap-6">
+
+            {/* Card 1 */}
+            <div className="min-w-[360px] bg-gradient-to-br from-primary to-accent text-white rounded-2xl p-6 shadow-xl hover:scale-105 transition">
+              <h3 className="text-xl font-bold mb-2">Placement Courses with AI</h3>
+              <p className="text-sm opacity-90 mb-4">
+                Get placed at Amazon, Flipkart, Samsung and 200+ companies.
+              </p>
+              <Button variant="secondary">Know More</Button>
+            </div>
+
+            {/* Card 2 */}
+            <div className="min-w-[360px] bg-white rounded-2xl p-6 shadow-xl hover:scale-105 transition">
+              <h3 className="text-xl font-bold text-foreground mb-2">GenZ Career Masterclass</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Attend, Get Assessed, Get Certified.
+              </p>
+              <Button>Register Now</Button>
+            </div>
+
+            {/* Card 3 */}
+            <div className="min-w-[360px] bg-gradient-to-br from-accent to-primary text-white rounded-2xl p-6 shadow-xl hover:scale-105 transition">
+              <h3 className="text-xl font-bold mb-2">Special College Offer</h3>
+              <p className="text-sm opacity-90 mb-4">
+                Flat 80% OFF on all online trainings.
+              </p>
+              <Button variant="secondary">Know More</Button>
+            </div>
+
+          </div>
+        ))}
 
       </div>
     </div>

@@ -180,12 +180,21 @@
 /* Auto horizontal scroll */
 .auto-scroll {
   display: flex;
-  gap: 1.5rem;
-  animation: scrollLeft 25s linear infinite;
+  width: max-content;
+  animation: scroll 30s linear infinite;
 }
 
 .auto-scroll:hover {
   animation-play-state: paused;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes scrollLeft {

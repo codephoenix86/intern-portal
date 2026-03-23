@@ -1,0 +1,52 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    // File Layout
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    // Environment Settings
+    "module": "nodenext",           
+    "moduleResolution": "nodenext", 
+    "target": "esnext",
+    "lib": ["esnext"],              
+    "types": ["node"],              
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Style Options
+    "noImplicitReturns": true,      
+    "noImplicitOverride": true,     
+    "noUnusedLocals": true,         
+    "noUnusedParameters": true,     
+    "noFallthroughCasesInSwitch": true, 
+
+    // Recommended Options
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+
+    // Added for safety
+    "allowSyntheticDefaultImports": true, 
+    "forceConsistentCasingInFileNames": true, 
+    "resolveJsonModule": true,              
+    "esModuleInterop": true                 
+  },
+  "include": ["src/**/*"],         
+  "exclude": [
+    "node_modules",                 
+    "dist",                         
+    "**/*.test.ts",                 
+    "**/*.spec.ts"                  
+  ]
+}

@@ -3,8 +3,11 @@ import { useState } from "react";
 import { GraduationCap, Menu, X } from "lucide-react";
 import { Button } from "./ui/button";
 import NotificationBell from "./NotificationBell";
+import { useAuth } from "@/contexts/AuthContext";
+import LogoutButton from "./auth/LogoutButton";
 
 const Navbar = () => {
+  const { isAuthenticated, user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const isLanding = location.pathname === "/";
@@ -48,57 +51,39 @@ const Navbar = () => {
 
           <div className="hidden md:flex items-center gap-3">
             <NotificationBell />
-            <Link to="/login">
-              <Button variant="ghost" size="sm">
-                Log in
-              </Button>
-            </Link>
-            <Link to="/register">
-              <Button size="sm">Get Started</Button>
-            </Link>
-          </div>
 
-          <button
-            className="md:hidden p-2"
-            onClick={() => setMobileOpen(!mobileOpen)}
-          >
-            {mobileOpen ? (
-              <X className="h-5 w-5" />
+            {isAuthenticated && user ? (
+              <>
+                <Link
+                  to={
+                    user.role === "student"
+                      ? "/student"
+                      : user.role === "mentor"
+                        ? "/mentor"
+                        : "/recruiter"
+                  }
+                >
+                  <Button variant="ghost" size="sm">
+                    Dashboard
+                  </Button>
+                </Link>
+                <LogoutButton variant="ghost" showText={false} />
+              </>
             ) : (
-              <Menu className="h-5 w-5" />
+              <>
+                <Link to="/login">
+                  <Button variant="ghost" size="sm">
+                    Log in
+                  </Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm">Get Started</Button>
+                </Link>
+              </>
             )}
-          </button>
+          </div>
         </div>
       </div>
-
-      {mobileOpen && (
-        <div className="md:hidden border-t border-border bg-card animate-fade-in">
-          <div className="px-4 py-3 space-y-2">
-            {links.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className="block py-2 text-sm text-foreground"
-                onClick={() => setMobileOpen(false)}
-              >
-                {l.label}
-              </Link>
-            ))}
-            <div className="flex gap-2 pt-2">
-              <Link to="/login" className="flex-1">
-                <Button variant="ghost" className="w-full" size="sm">
-                  Log in
-                </Button>
-              </Link>
-              <Link to="/register" className="flex-1">
-                <Button className="w-full" size="sm">
-                  Get Started
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };

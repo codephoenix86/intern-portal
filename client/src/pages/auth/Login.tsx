@@ -1,11 +1,24 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import AuthLogo from "@/components/auth/AuthLogo";
 import AuthBrandPanel from "@/components/auth/AuthBrandPanel";
 import AuthDivider from "@/components/auth/AuthDivider";
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 import LoginForm from "@/components/auth/LoginForm";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
+  const { isAuthenticated, user, isLoading } = useAuth();
+
+  // If already logged in, redirect to dashboard
+  if (!isLoading && isAuthenticated && user) {
+    const roleRedirect: Record<string, string> = {
+      student: "/student",
+      mentor: "/mentor",
+      recruiter: "/recruiter",
+    };
+    return <Navigate to={roleRedirect[user.role] || "/student"} replace />;
+  }
+
   return (
     <div className="min-h-screen flex">
       {/* Left — Form */}
@@ -22,6 +35,7 @@ const Login = () => {
 
           <AuthDivider />
 
+          {/* No role needed for login — existing user already has role */}
           <GoogleAuthButton />
 
           <p className="text-center text-sm text-muted-foreground mt-6">

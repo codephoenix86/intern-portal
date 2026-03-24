@@ -48,5 +48,6 @@
     "dist",                         
     "**/*.test.ts",                 
     "**/*.spec.ts"                  
-  ]
+  ],
+  "typeRoots": ["./src/types", "./node_modules/@types"]
 }

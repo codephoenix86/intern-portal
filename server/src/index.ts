@@ -1,23 +1,31 @@
-import express, { type Application } from "express";
+import app from "./app.js";
+import connectDB from "./config/db.js";
+import { ENV } from "./config/env.js";
 
-// App configs
-const app: Application = express();
-const PORT = process.env.PORT || 3000;
+const startServer = async (): Promise<void> => {
+  try {
+    // 1. Connect to MongoDB
+    await connectDB();
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+    // 2. Start Express server
+    app.listen(ENV.PORT, () => {
+      console.log(`Listening on Port: ${ENV.PORT}`);
+    });
+  } catch (error) {
+    console.error(" Failed to start server:", error);
+    process.exit(1);
+  }
+};
 
-// Routes
-
-// API checkpoints
-app.get("/", (req, res) => {
-  res.json({ message: "Server is running! " });
+// Handle uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+  process.exit(1);
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled Rejection:", error);
+  process.exit(1);
 });
 
-export default app;
+startServer();

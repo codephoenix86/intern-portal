@@ -26,8 +26,12 @@ export const ENV = {
 
   RESEND_API_KEY: getEnv("RESEND_API_KEY", ""),
 
-  GOOGLE_CLIENT_ID: getEnv("GOOGLE_CLIENT_ID", ""),
-  GOOGLE_CLIENT_SECRET: getEnv("GOOGLE_CLIENT_SECRET", ""),
+  GOOGLE_CLIENT_ID: getEnv("GOOGLE_CLIENT_ID"),
+  GOOGLE_CLIENT_SECRET: getEnv("GOOGLE_CLIENT_SECRET"),
+  GOOGLE_REDIRECT_URI: getEnv(
+    "GOOGLE_REDIRECT_URI",
+    "http://localhost:5000/api/auth/google/callback",
+  ),
   GITHUB_CLIENT_ID: getEnv("GITHUB_CLIENT_ID", ""),
   GITHUB_CLIENT_SECRET: getEnv("GITHUB_CLIENT_SECRET", ""),
 

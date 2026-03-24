@@ -7,8 +7,7 @@ import RoleSelector from "./RoleSelector";
 import { getRoleLabel } from "@/utils/auth.utils";
 import type { UserRole } from "@/types/auth.types";
 
-const RegisterForm = () => {
-  const [role, setRole] = useState<UserRole>("student");
+const RegisterForm = ({ role, setRole }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

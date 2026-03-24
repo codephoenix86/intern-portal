@@ -11,8 +11,10 @@ import MentorAssignments from "./MentorAssignments";
 import MentorProgress from "./MentorProgress";
 import MentorMessages from "./MentorMessage";
 import MentorSettings from "./MentorSetting";
+import { useOAuthCallback } from "@/hooks/useOAuthCallback";
 
 const MentorDashboard = () => {
+  useOAuthCallback();
   return (
     <Routes>
       <Route

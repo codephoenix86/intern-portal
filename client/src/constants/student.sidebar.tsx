@@ -8,6 +8,7 @@ import {
   Kanban,
   Bell,
   Settings,
+  Video,
 } from "lucide-react";
 import type { SidebarItem } from "@/types/student.types";
 
@@ -56,5 +57,10 @@ export const STUDENT_SIDEBAR_ITEMS: SidebarItem[] = [
     to: "/student/settings",
     label: "Settings",
     icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    to: "/student/sessions",
+    label: "Live Sessions",
+    icon: <Video className="h-4 w-4" />,
   },
 ];

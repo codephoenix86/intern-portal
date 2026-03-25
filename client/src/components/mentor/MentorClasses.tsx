@@ -1,5 +1,3 @@
-// client/src/pages/mentor/MentorClasses.tsx
-
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,12 +58,14 @@ const MentorClasses = () => {
     fetchSessions();
   }, [fetchSessions]);
 
+  // Reset page on filter change
   useEffect(() => {
     setPage(1);
   }, [typeFilter, statusFilter]);
 
   return (
     <div className="space-y-5">
+      {/* Header: Filters + Schedule Button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <Select
@@ -104,10 +104,12 @@ const MentorClasses = () => {
         <ScheduleSessionDialog onSessionCreated={fetchSessions} />
       </div>
 
+      {/* Result count */}
       <p className="text-sm text-muted-foreground">
         {total} session{total !== 1 ? "s" : ""} found
       </p>
 
+      {/* Sessions list */}
       {isLoading ? (
         <div className="flex items-center justify-center py-16">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -127,12 +129,13 @@ const MentorClasses = () => {
         </div>
       ) : (
         <div className="space-y-3">
-          {sessions.filter(Boolean).map((s) => (
+          {sessions.map((s) => (
             <ClassCard key={s._id} session={s} onUpdate={fetchSessions} />
           ))}
         </div>
       )}
 
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 pt-4">
           <Button

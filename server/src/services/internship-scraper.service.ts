@@ -34,6 +34,27 @@ const makeId = (input: string): string =>
 
 const safeText = (value?: string): string => (value ?? "").trim();
 
+const dedupeInternships = (
+  internships: InternshipRecord[],
+): InternshipRecord[] => {
+  const seen = new Set<string>();
+  const unique: InternshipRecord[] = [];
+
+  for (const internship of internships) {
+    const key =
+      internship.applyUrl ?? `${internship.id}-${internship.location}`;
+
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    unique.push(internship);
+  }
+
+  return unique;
+};
+
 const normalize = (
   internship: InternshipRecord,
   params: InternshipSearchParams,
@@ -74,7 +95,7 @@ const scrapeInternshala = async (): Promise<InternshipRecord[]> => {
   const $ = cheerio.load(data);
   const records: InternshipRecord[] = [];
 
-  $(".individual_internship, .internship_meta").each((_, el) => {
+  $(".individual_internship").each((_, el) => {
     const card = $(el);
 
     const title =
@@ -140,7 +161,7 @@ const scrapeInternshala = async (): Promise<InternshipRecord[]> => {
     records.push(internship);
   });
 
-  return records;
+  return dedupeInternships(records);
 };
 
 const fallbackInternships = (): InternshipRecord[] => [
@@ -183,7 +204,7 @@ export const internshipScraperService = {
       warnings.push("Showing fallback data because no live listings were fetched.");
     }
 
-    const filtered = internships
+    const filtered = dedupeInternships(internships)
       .map((item) => normalize(item, params))
       .filter((item): item is InternshipRecord => Boolean(item))
       .slice(0, limit);

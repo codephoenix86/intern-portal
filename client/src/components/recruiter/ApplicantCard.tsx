@@ -9,9 +9,15 @@ import type { Applicant } from "@/types/recruiter.types";
 
 interface ApplicantCardProps {
   applicant: Applicant;
+  onStatusChange?: (applicationId: string, status: string) => void;
+  statusUpdating?: boolean;
 }
 
-const ApplicantCard = ({ applicant }: ApplicantCardProps) => {
+const ApplicantCard = ({
+  applicant,
+  onStatusChange,
+  statusUpdating,
+}: ApplicantCardProps) => {
   return (
     <div className="glass-card rounded-lg p-5 hover-lift">
       {/* Header */}
@@ -42,12 +48,32 @@ const ApplicantCard = ({ applicant }: ApplicantCardProps) => {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2">
-        <ApplicantStatusSelect currentStatus={applicant.status} />
-        <Button size="sm" variant="outline">
-          View Resume
-        </Button>
+      <div className="flex gap-2 flex-wrap">
+        <ApplicantStatusSelect
+          currentStatus={applicant.status}
+          onChange={(v) =>
+            onStatusChange?.(applicant.applicationId, v)
+          }
+        />
+        {applicant.resumeUrl ? (
+          <Button size="sm" variant="outline" asChild>
+            <a
+              href={applicant.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View Resume
+            </a>
+          </Button>
+        ) : (
+          <Button size="sm" variant="outline" disabled>
+            No resume
+          </Button>
+        )}
       </div>
+      {statusUpdating && (
+        <p className="text-xs text-muted-foreground mt-2">Updating status…</p>
+      )}
     </div>
   );
 };

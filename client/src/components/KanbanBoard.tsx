@@ -1,6 +1,10 @@
-import { applications } from "@/data/mockData";
+import type { StudentApplicationRow } from "@/services/studentPortal.service";
 
 const stages = ["Applied", "Screening", "Interview", "Offer", "Rejected"];
+
+interface KanbanBoardProps {
+  applications: StudentApplicationRow[];
+}
 
 const stageColors: Record<string, string> = {
   Applied: "bg-primary/10 border-primary/30",
@@ -10,7 +14,7 @@ const stageColors: Record<string, string> = {
   Rejected: "bg-destructive/10 border-destructive/30",
 };
 
-const KanbanBoard = () => (
+const KanbanBoard = ({ applications }: KanbanBoardProps) => (
   <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
     {stages.map(stage => {
       const items = applications.filter(a => a.status === stage);

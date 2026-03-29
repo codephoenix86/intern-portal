@@ -1,10 +1,18 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
 import QuizQuestion from "@/components/student/QuizQuestion";
 import QuizResult from "@/components/student/QuizResult";
-import { skillQuiz } from "@/data/mockData";
+import { getStudentQuiz } from "@/services/studentPortal.service";
 
 const SkillEvaluation = () => {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["student", "content", "quiz"],
+    queryFn: getStudentQuiz,
+  });
+
+  const skillQuiz = data?.questions ?? [];
+
   const [currentQ, setCurrentQ] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showResult, setShowResult] = useState(false);
@@ -26,10 +34,26 @@ const SkillEvaluation = () => {
     setShowResult(false);
   };
 
-  const score = answers.filter((a, i) => a === skillQuiz[i].correct).length;
+  const score = answers.filter((a, i) => a === skillQuiz[i]?.correct).length;
 
   const level =
     score >= 4 ? "Advanced" : score >= 2 ? "Intermediate" : "Beginner";
+
+  if (isLoading) {
+    return (
+      <p className="text-sm text-muted-foreground text-center py-8">
+        Loading quiz…
+      </p>
+    );
+  }
+
+  if (isError || skillQuiz.length === 0) {
+    return (
+      <p className="text-sm text-destructive text-center py-8">
+        Could not load the skill quiz.
+      </p>
+    );
+  }
 
   if (showResult) {
     return (

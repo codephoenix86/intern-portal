@@ -52,11 +52,14 @@ class StudentInternshipService {
     return Application.countDocuments({ jobId });
   }
 
-  async listJobs(studentId: string, filters: JobListFilters = {}) {
+  /**
+   * Shared listing logic — `studentSkills` empty for anonymous browse (match scores will be 0).
+   */
+  private async listJobsWithSkills(
+    studentSkills: string[],
+    filters: JobListFilters = {},
+  ) {
     await this.ensureSeededJobs();
-
-    const user = await User.findById(studentId).select("studentSkills").lean();
-    const studentSkills = user?.studentSkills ?? [];
 
     const q: Record<string, unknown> = { isActive: true };
 
@@ -103,6 +106,16 @@ class StudentInternshipService {
     };
   }
 
+  async listJobs(studentId: string, filters: JobListFilters = {}) {
+    const user = await User.findById(studentId).select("studentSkills").lean();
+    const studentSkills = user?.studentSkills ?? [];
+    return this.listJobsWithSkills(studentSkills, filters);
+  }
+
+  async listPublicJobs(filters: JobListFilters = {}) {
+    return this.listJobsWithSkills([], filters);
+  }
+
   async getRecommended(studentId: string) {
     const { jobs } = await this.listJobs(studentId, { sort: "match" });
     return {
@@ -143,6 +156,22 @@ class StudentInternshipService {
     }
 
     return { score: computeMatchScore(studentSkills, job.skills) };
+  }
+
+  async getPublicJobById(jobId: string) {
+    await this.ensureSeededJobs();
+
+    const job = await Job.findOne({ _id: jobId, isActive: true }).lean();
+    if (!job) {
+      throw new AppError(404, "Internship not found");
+    }
+
+    const applicants = await this.applicantCount(jobId);
+    const matchScore = computeMatchScore([], job.skills);
+
+    return {
+      job: toCard(job as IJob & { createdAt: Date }, applicants, matchScore),
+    };
   }
 }
 

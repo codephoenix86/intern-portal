@@ -28,10 +28,11 @@ export interface RecommendedCourse {
   provider: string;
   duration: string;
   level: string;
+  url?: string;
 }
 
 export interface Notification {
-  id: number;
+  id: string | number;
   message: string;
   time: string;
   read: boolean;

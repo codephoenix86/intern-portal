@@ -9,6 +9,7 @@ import mentorRoutes from "./routes/mentor.routes.js";
 import sessionRoutes from "./routes/session.routes.js";
 import studentRoutes from "./routes/student.routes.js";
 import recruiterRoutes from "./routes/recruiter.routes.js";
+import publicRoutes from "./routes/public.routes.js";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/mentor", mentorRoutes);
 app.use("/api/sessions", sessionRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/recruiter", recruiterRoutes);
+app.use("/api/public", publicRoutes);
 
 // ── Health Check ─────────────────────────────────────
 app.get("/health", (_req, res) => {

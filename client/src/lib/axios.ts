@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosHeaders, type InternalAxiosRequestConfig } from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -29,6 +29,22 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
+function stripJsonContentTypeForFormData(
+  config: InternalAxiosRequestConfig,
+): void {
+  if (!(config.data instanceof FormData)) return;
+  // Default instance uses Content-Type: application/json — that breaks multipart
+  // parsing on the server unless the browser sets multipart boundary here.
+  const h = config.headers;
+  if (!h) return;
+  if (h instanceof AxiosHeaders) {
+    h.delete("Content-Type");
+  } else {
+    delete (h as Record<string, unknown>)["Content-Type"];
+    delete (h as Record<string, unknown>)["content-type"];
+  }
+}
+
 // ── Request Interceptor ──────────────────────────────
 // Attach access token to every request
 api.interceptors.request.use(
@@ -37,6 +53,7 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    stripJsonContentTypeForFormData(config);
     return config;
   },
   (error) => Promise.reject(error),

@@ -20,9 +20,9 @@ const ApplicantStatusSelect = ({
   const statusOptions = APPLICANT_STATUS_FILTERS.filter((s) => s !== "all");
 
   return (
-    <Select onValueChange={onChange}>
+    <Select value={currentStatus} onValueChange={onChange}>
       <SelectTrigger className="w-40">
-        <SelectValue placeholder={currentStatus} />
+        <SelectValue />
       </SelectTrigger>
       <SelectContent>
         {statusOptions.map((s) => (

@@ -56,7 +56,7 @@ const DashboardLayout = ({ children, sidebarItems, role, title }: DashboardLayou
             </button>
             <h1 className="font-semibold text-foreground">{title}</h1>
           </div>
-          <NotificationBell />
+          <NotificationBell role={role} />
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>

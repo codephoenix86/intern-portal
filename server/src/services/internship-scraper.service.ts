@@ -34,6 +34,49 @@ const makeId = (input: string): string =>
 
 const safeText = (value?: string): string => (value ?? "").trim();
 
+const DEVELOPMENT_KEYWORDS = [
+  "developer",
+  "software",
+  "web",
+  "frontend",
+  "front-end",
+  "backend",
+  "back-end",
+  "full stack",
+  "full-stack",
+  "react",
+  "node",
+  "javascript",
+  "typescript",
+  "python",
+  "java",
+  "artificial intelligence",
+  "machine learning",
+  "machine-learning",
+  "ml",
+  "api",
+  "engineering",
+  "sde",
+];
+
+const NON_TECH_DEVELOPMENT_PHRASES = [
+  "business development",
+  "sales development",
+  "market development",
+  "brand development",
+  "partnership development",
+];
+
+const isDevelopmentInternship = (internship: InternshipRecord): boolean => {
+  const haystack = `${internship.title} ${internship.skills.join(" ")}`.toLowerCase();
+
+  if (NON_TECH_DEVELOPMENT_PHRASES.some((phrase) => haystack.includes(phrase))) {
+    return false;
+  }
+
+  return DEVELOPMENT_KEYWORDS.some((keyword) => haystack.includes(keyword));
+};
+
 const dedupeInternships = (
   internships: InternshipRecord[],
 ): InternshipRecord[] => {
@@ -80,9 +123,7 @@ const normalize = (
   return internship;
 };
 
-const scrapeInternshala = async (): Promise<InternshipRecord[]> => {
-  const url = "https://internshala.com/internships";
-
+const scrapeInternshalaPage = async (url: string): Promise<InternshipRecord[]> => {
   const { data } = await axios.get<string>(url, {
     timeout: SCRAPE_TIMEOUT_MS,
     headers: {
@@ -164,6 +205,30 @@ const scrapeInternshala = async (): Promise<InternshipRecord[]> => {
   return dedupeInternships(records);
 };
 
+const scrapeInternshala = async (): Promise<InternshipRecord[]> => {
+  const urls = [
+    "https://internshala.com/internships",
+    "https://internshala.com/web-development-internship",
+    "https://internshala.com/software-development-internship",
+    "https://internshala.com/front-end-development-internship",
+    "https://internshala.com/back-end-development-internship",
+    "https://internshala.com/full-stack-development-internship",
+  ];
+
+  const settled = await Promise.allSettled(
+    urls.map((url) => scrapeInternshalaPage(url)),
+  );
+
+  const combined: InternshipRecord[] = [];
+  for (const result of settled) {
+    if (result.status === "fulfilled") {
+      combined.push(...result.value);
+    }
+  }
+
+  return dedupeInternships(combined);
+};
+
 const fallbackInternships = (): InternshipRecord[] => [
   {
     id: "fallback-frontend-intern",
@@ -206,11 +271,20 @@ export const internshipScraperService = {
 
     const filtered = dedupeInternships(internships)
       .map((item) => normalize(item, params))
-      .filter((item): item is InternshipRecord => Boolean(item))
-      .slice(0, limit);
+      .filter((item): item is InternshipRecord => Boolean(item));
+
+    // When no explicit keyword is provided, show development-focused roles first.
+    const prioritized = params.keyword
+      ? filtered
+      : [
+          ...filtered.filter((item) => isDevelopmentInternship(item)),
+          ...filtered.filter((item) => !isDevelopmentInternship(item)),
+        ];
+
+    const limited = prioritized.slice(0, limit);
 
     return {
-      internships: filtered,
+      internships: limited,
       sourceWarnings: warnings,
     };
   },

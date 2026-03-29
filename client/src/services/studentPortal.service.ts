@@ -40,10 +40,24 @@ export interface StudentQuizQuestion {
 }
 
 export interface StudentRoadmapTask {
-  id: number;
+  id: string;
   title: string;
   category: string;
   completed: boolean;
+}
+
+export interface StudentRoadmapSummary {
+  total: number;
+  completed: number;
+  remaining: number;
+  nextTask: string | null;
+}
+
+export interface StudentRoadmapData {
+  availableFields: string[];
+  selectedFields: string[];
+  tasks: StudentRoadmapTask[];
+  summary: StudentRoadmapSummary;
 }
 
 export interface StudentCourse {
@@ -53,6 +67,7 @@ export interface StudentCourse {
   duration: string;
   level: string;
   url: string;
+  tags?: string[];
 }
 
 interface StudentJobsResponse {
@@ -68,7 +83,10 @@ interface StudentQuizResponse {
 }
 
 interface StudentRoadmapResponse {
+  availableFields: string[];
+  selectedFields: string[];
   tasks: StudentRoadmapTask[];
+  summary: StudentRoadmapSummary;
 }
 
 interface StudentCoursesResponse {
@@ -134,24 +152,34 @@ export const studentPortalService = {
     return data.data.questions;
   },
 
-  getRoadmap: async (): Promise<StudentRoadmapTask[]> => {
+  getRoadmap: async (fields?: string[]): Promise<StudentRoadmapData> => {
     const { data } = await api.get<ApiEnvelope<StudentRoadmapResponse>>(
       "/student/content/roadmap",
+      {
+        params: {
+          fields: fields && fields.length > 0 ? fields.join(",") : undefined,
+        },
+      },
     );
-    return data.data.tasks;
+    return data.data;
   },
 
-  toggleRoadmapTask: async (taskId: number | string): Promise<StudentRoadmapTask[]> => {
+  toggleRoadmapTask: async (taskId: string): Promise<StudentRoadmapData> => {
     const { data } = await api.patch<ApiEnvelope<StudentRoadmapResponse>>(
       `/student/content/roadmap/tasks/${taskId}`,
       {},
     );
-    return data.data.tasks;
+    return data.data;
   },
 
-  getCourses: async (): Promise<StudentCourse[]> => {
+  getCourses: async (fields?: string[]): Promise<StudentCourse[]> => {
     const { data } = await api.get<ApiEnvelope<StudentCoursesResponse>>(
       "/student/content/courses",
+      {
+        params: {
+          fields: fields && fields.length > 0 ? fields.join(",") : undefined,
+        },
+      },
     );
     return data.data.courses;
   },

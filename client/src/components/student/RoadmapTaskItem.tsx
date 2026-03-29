@@ -2,7 +2,7 @@ import type { RoadmapTask } from "@/types/student.types";
 
 interface RoadmapTaskItemProps {
   task: RoadmapTask;
-  onToggle?: (id: number) => void;
+  onToggle?: (id: string) => void;
   disabled?: boolean;
 }
 

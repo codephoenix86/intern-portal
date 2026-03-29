@@ -16,7 +16,7 @@ export interface SkillDemandItem {
 }
 
 export interface RoadmapTask {
-  id: number;
+  id: string;
   title: string;
   category: string;
   completed: boolean;
@@ -28,6 +28,8 @@ export interface RecommendedCourse {
   provider: string;
   duration: string;
   level: string;
+  url: string;
+  tags?: string[];
 }
 
 export interface Notification {

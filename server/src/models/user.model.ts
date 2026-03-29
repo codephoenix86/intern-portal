@@ -39,6 +39,7 @@ export interface IUser {
     category: string;
     completed: boolean;
   }>;
+  roadmapInterests: string[];
 
   // Mentor-specific
   expertise: string[];
@@ -182,6 +183,10 @@ const userSchema = new Schema<IUser>(
           completed: { type: Boolean, default: false },
         },
       ],
+      default: [],
+    },
+    roadmapInterests: {
+      type: [String],
       default: [],
     },
 

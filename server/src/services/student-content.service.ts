@@ -4,7 +4,8 @@ import {
   SKILL_QUESTION_BANK,
   type SkillQuestionSeed,
   type SkillQuestionType,
-  DEFAULT_ROADMAP_TASKS,
+  ROADMAP_FIELD_TEMPLATES,
+  TRENDING_ROADMAP_FIELDS,
   RECOMMENDED_COURSES,
 } from "../data/student-content.seed.js";
 
@@ -90,28 +91,149 @@ class StudentContentService {
     };
   }
 
-  getCourses() {
-    return { courses: RECOMMENDED_COURSES };
+  getCourses(fieldsInput?: string[]) {
+    const fields = (fieldsInput ?? [])
+      .map((f) => f.trim())
+      .filter(Boolean)
+      .map((f) => this.resolveFieldName(f));
+
+    if (fields.length === 0) {
+      return { courses: RECOMMENDED_COURSES.slice(0, 8) };
+    }
+
+    const normalizedFields = fields.map((f) => this.normalizeField(f));
+
+    const matched = RECOMMENDED_COURSES.filter((course) => {
+      const tags = (course.tags ?? []).map((tag: string) => this.normalizeField(tag));
+      return normalizedFields.some((field) => tags.includes(field));
+    });
+
+    return { courses: matched.length > 0 ? matched : RECOMMENDED_COURSES.slice(0, 8) };
   }
 
-  async getRoadmap(studentId: string) {
+  private normalizeField(value: string): string {
+    return value.trim().toLowerCase();
+  }
+
+  private resolveFieldName(input: string): string {
+    const normalized = this.normalizeField(input);
+    for (const field of TRENDING_ROADMAP_FIELDS) {
+      if (this.normalizeField(field) === normalized) {
+        return field;
+      }
+    }
+    return input.trim();
+  }
+
+  private genericTemplate(field: string): Array<{ title: string; category: string }> {
+    return [
+      { title: `Learn ${field} fundamentals`, category: "Foundations" },
+      { title: `Build small ${field} practice projects`, category: "Practice" },
+      { title: `Complete one intermediate ${field} project`, category: "Projects" },
+      { title: `Study interview topics for ${field}`, category: "Interview Prep" },
+      { title: `Create a ${field} portfolio showcase`, category: "Portfolio" },
+    ];
+  }
+
+  private buildTasksForFields(fields: string[]) {
+    const generated: Array<{ id: string; title: string; category: string }> = [];
+    const dedupe = new Set<string>();
+
+    for (const field of fields) {
+      const template =
+        ROADMAP_FIELD_TEMPLATES[field] ?? this.genericTemplate(field);
+
+      template.forEach((step, index) => {
+        const key = `${field.toLowerCase()}::${step.title.toLowerCase()}`;
+        if (dedupe.has(key)) return;
+        dedupe.add(key);
+        generated.push({
+          id: `${field.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index + 1}`,
+          title: step.title,
+          category: `${field} - ${step.category}`,
+        });
+      });
+    }
+
+    return generated;
+  }
+
+  private fieldsChanged(current: string[], incoming: string[]): boolean {
+    if (current.length !== incoming.length) return true;
+    const currentNormalized = current
+      .map((f) => this.normalizeField(f))
+      .sort();
+    const incomingNormalized = incoming
+      .map((f) => this.normalizeField(f))
+      .sort();
+    return currentNormalized.some((v, i) => v !== incomingNormalized[i]);
+  }
+
+  async getRoadmap(studentId: string, fieldsInput?: string[]) {
     const user = await User.findById(studentId);
     if (!user) {
       throw new AppError(404, "User not found");
     }
 
-    if (!user.roadmapTasks || user.roadmapTasks.length === 0) {
-      user.roadmapTasks = DEFAULT_ROADMAP_TASKS.map((t) => ({ ...t }));
+    const incomingFields = (fieldsInput ?? [])
+      .map((f) => f.trim())
+      .filter(Boolean)
+      .map((f) => this.resolveFieldName(f));
+
+    const currentInterests = user.roadmapInterests ?? [];
+
+    const selectedFields =
+      incomingFields.length > 0
+        ? incomingFields
+        : currentInterests.length > 0
+          ? currentInterests
+          : ["Full Stack Development"];
+
+    const shouldRegenerate =
+      !user.roadmapTasks ||
+      user.roadmapTasks.length === 0 ||
+      this.fieldsChanged(currentInterests, selectedFields);
+
+    if (shouldRegenerate) {
+      const previousByTitle = new Map(
+        (user.roadmapTasks ?? []).map((task) => [
+          task.title.toLowerCase(),
+          task.completed,
+        ]),
+      );
+
+      const nextTasks = this.buildTasksForFields(selectedFields);
+      user.roadmapTasks = nextTasks.map((task) => ({
+        id: task.id,
+        title: task.title,
+        category: task.category,
+        completed: previousByTitle.get(task.title.toLowerCase()) ?? false,
+      }));
+      user.roadmapInterests = selectedFields;
       await user.save();
     }
 
+    const tasks = user.roadmapTasks.map((t) => ({
+      id: t.id,
+      title: t.title,
+      category: t.category,
+      completed: t.completed,
+    }));
+
+    const completedCount = tasks.filter((t) => t.completed).length;
+    const totalCount = tasks.length;
+    const nextTask = tasks.find((t) => !t.completed)?.title ?? null;
+
     return {
-      tasks: user.roadmapTasks.map((t) => ({
-        id: Number.parseInt(t.id, 10) || t.id,
-        title: t.title,
-        category: t.category,
-        completed: t.completed,
-      })),
+      availableFields: TRENDING_ROADMAP_FIELDS,
+      selectedFields: user.roadmapInterests ?? [],
+      tasks,
+      summary: {
+        total: totalCount,
+        completed: completedCount,
+        remaining: Math.max(totalCount - completedCount, 0),
+        nextTask,
+      },
     };
   }
 
@@ -122,7 +244,13 @@ class StudentContentService {
     }
 
     if (!user.roadmapTasks || user.roadmapTasks.length === 0) {
-      user.roadmapTasks = DEFAULT_ROADMAP_TASKS.map((t) => ({ ...t }));
+      await this.getRoadmap(studentId);
+      const refreshedUser = await User.findById(studentId);
+      if (!refreshedUser) {
+        throw new AppError(404, "User not found");
+      }
+      user.roadmapTasks = refreshedUser.roadmapTasks;
+      user.roadmapInterests = refreshedUser.roadmapInterests;
     }
 
     const task = user.roadmapTasks.find((t) => t.id === taskId);
@@ -132,7 +260,7 @@ class StudentContentService {
     task.completed = !task.completed;
     await user.save();
 
-    return this.getRoadmap(studentId);
+    return this.getRoadmap(studentId, user.roadmapInterests ?? []);
   }
 }
 

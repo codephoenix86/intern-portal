@@ -378,7 +378,16 @@ export const getQuiz = async (req: Request, res: Response): Promise<void> => {
 
 export const getRoadmap = async (req: Request, res: Response): Promise<void> => {
   try {
-    const data = await studentContentService.getRoadmap(req.user!.userId);
+    const rawFields = routeParam(
+      req.query["fields"] as string | string[] | undefined,
+    );
+    const fields = rawFields
+      ? rawFields
+          .split(",")
+          .map((f) => f.trim())
+          .filter(Boolean)
+      : undefined;
+    const data = await studentContentService.getRoadmap(req.user!.userId, fields);
     sendSuccess(res, 200, "OK", data);
   } catch (error) {
     if (error instanceof AppError) {
@@ -415,9 +424,18 @@ export const patchRoadmapTask = async (
   }
 };
 
-export const getCourses = async (_req: Request, res: Response): Promise<void> => {
+export const getCourses = async (req: Request, res: Response): Promise<void> => {
   try {
-    const data = studentContentService.getCourses();
+    const rawFields = routeParam(
+      req.query["fields"] as string | string[] | undefined,
+    );
+    const fields = rawFields
+      ? rawFields
+          .split(",")
+          .map((f) => f.trim())
+          .filter(Boolean)
+      : undefined;
+    const data = studentContentService.getCourses(fields);
     sendSuccess(res, 200, "OK", data);
   } catch (error) {
     console.error(error);

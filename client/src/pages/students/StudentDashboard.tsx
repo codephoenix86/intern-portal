@@ -13,11 +13,9 @@ import SkillRoadmap from "./SkillRoadmap";
 import Applications from "./Applications";
 import NotificationsPage from "./NotificationsPage";
 import SettingsPage from "./SettingsPage";
-import { useOAuthCallback } from "@/hooks/useOAuthCallback";
 import StudentSessions from "./StudentSessions";
 
 const StudentDashboard = () => {
-  useOAuthCallback();
   return (
     <Routes>
       <Route

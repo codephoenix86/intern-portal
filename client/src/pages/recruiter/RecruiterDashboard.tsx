@@ -10,10 +10,7 @@ import MyListings from "./MyListings";
 import ApplicantsList from "./ApplicantsList";
 import RecruiterNotifications from "./RecruiterNotifications";
 import RecruiterSettings from "./RecruiterSettings";
-import { useOAuthCallback } from "@/hooks/useOAuthCallback";
-
 const RecruiterDashboard = () => {
-  useOAuthCallback();
   return (
     <Routes>
       <Route

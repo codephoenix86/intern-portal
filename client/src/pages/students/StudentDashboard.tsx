@@ -11,9 +11,9 @@ import ResumePage from "./ResumePage";
 import SkillEvaluation from "./SkillEvaluation";
 import SkillRoadmap from "./SkillRoadmap";
 import Applications from "./Applications";
-import NotificationsPage from "./NotificationsPage";
 import SettingsPage from "./SettingsPage";
 import StudentSessions from "./StudentSessions";
+import ProfilePage from "./ProfilePage";
 
 const StudentDashboard = () => {
   return (
@@ -123,19 +123,6 @@ const StudentDashboard = () => {
       />
 
       <Route
-        path="/notifications"
-        element={
-          <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
-            role="student"
-            title="Notifications"
-          >
-            <NotificationsPage />
-          </DashboardLayout>
-        }
-      />
-
-      <Route
         path="/settings"
         element={
           <DashboardLayout
@@ -144,6 +131,19 @@ const StudentDashboard = () => {
             title="Settings"
           >
             <SettingsPage />
+          </DashboardLayout>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="Profile"
+          >
+            <ProfilePage />
           </DashboardLayout>
         }
       />

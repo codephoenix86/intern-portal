@@ -208,11 +208,74 @@ export const patchStudentProfile = async (
     const update: {
       name?: string;
       phone?: string | null;
+      avatar?: string | null;
+      bio?: string | null;
+      college?: string | null;
+      branch?: string | null;
+      location?: string | null;
+      cgpa?: string | null;
+      semester?: string | null;
+      experienceSummary?: string | null;
       studentSkills?: string[];
+      studentProjects?: string[];
+      achievements?: string[];
+      codingProfiles?: {
+        leetcode?: string | null;
+        codechef?: string | null;
+        codeforces?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      };
     } = {};
     if (body.name !== undefined) update.name = body.name;
     if (body.phone !== undefined) update.phone = body.phone;
+    if (body.avatar !== undefined) update.avatar = body.avatar;
+    if (body.bio !== undefined) update.bio = body.bio;
+    if (body.college !== undefined) update.college = body.college;
+    if (body.branch !== undefined) update.branch = body.branch;
+    if (body.location !== undefined) update.location = body.location;
+    if (body.cgpa !== undefined) update.cgpa = body.cgpa;
+    if (body.semester !== undefined) update.semester = body.semester;
+    if (body.experienceSummary !== undefined) {
+      update.experienceSummary = body.experienceSummary;
+    }
     if (body.studentSkills !== undefined) update.studentSkills = body.studentSkills;
+    if (body.studentProjects !== undefined) {
+      update.studentProjects = body.studentProjects;
+    }
+    if (body.achievements !== undefined) update.achievements = body.achievements;
+    if (body.codingProfiles !== undefined) {
+      const codingProfiles: {
+        leetcode?: string | null;
+        codechef?: string | null;
+        codeforces?: string | null;
+        github?: string | null;
+        linkedin?: string | null;
+        portfolio?: string | null;
+      } = {};
+
+      if (body.codingProfiles.leetcode !== undefined) {
+        codingProfiles.leetcode = body.codingProfiles.leetcode;
+      }
+      if (body.codingProfiles.codechef !== undefined) {
+        codingProfiles.codechef = body.codingProfiles.codechef;
+      }
+      if (body.codingProfiles.codeforces !== undefined) {
+        codingProfiles.codeforces = body.codingProfiles.codeforces;
+      }
+      if (body.codingProfiles.github !== undefined) {
+        codingProfiles.github = body.codingProfiles.github;
+      }
+      if (body.codingProfiles.linkedin !== undefined) {
+        codingProfiles.linkedin = body.codingProfiles.linkedin;
+      }
+      if (body.codingProfiles.portfolio !== undefined) {
+        codingProfiles.portfolio = body.codingProfiles.portfolio;
+      }
+
+      update.codingProfiles = codingProfiles;
+    }
     const data = await studentProfileService.updateProfile(
       req.user!.userId,
       update,

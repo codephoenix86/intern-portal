@@ -1,13 +1,82 @@
 // client/src/pages/student/SkillRoadmap.tsx
 
+import { useEffect, useMemo, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import RoadmapTaskItem from "@/components/student/RoadmapTaskItem";
 import RecommendedCourseCard from "@/components/student/RecommendedCourseCard";
-import { roadmapTasks, recommendedCourses } from "@/data/mockData";
+import { Loader2 } from "lucide-react";
+import {
+  studentPortalService,
+  type StudentCourse,
+  type StudentRoadmapTask,
+} from "@/services/studentPortal.service";
+import { useToast } from "@/hooks/use-toast";
 
 const SkillRoadmap = () => {
-  const completed = roadmapTasks.filter((t) => t.completed).length;
-  const percentage = Math.round((completed / roadmapTasks.length) * 100);
+  const { toast } = useToast();
+  const [tasks, setTasks] = useState<StudentRoadmapTask[]>([]);
+  const [courses, setCourses] = useState<StudentCourse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [updatingTaskId, setUpdatingTaskId] = useState<number | null>(null);
+
+  useEffect(() => {
+    const loadRoadmap = async (): Promise<void> => {
+      try {
+        const [taskList, courseList] = await Promise.all([
+          studentPortalService.getRoadmap(),
+          studentPortalService.getCourses(),
+        ]);
+        setTasks(taskList);
+        setCourses(courseList);
+      } catch (error) {
+        console.error("Failed to load roadmap:", error);
+        toast({
+          title: "Failed to load roadmap",
+          description: "Please try again in a moment.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    void loadRoadmap();
+  }, [toast]);
+
+  const handleToggleTask = async (taskId: number): Promise<void> => {
+    try {
+      setUpdatingTaskId(taskId);
+      const updatedTasks = await studentPortalService.toggleRoadmapTask(taskId);
+      setTasks(updatedTasks);
+    } catch (error) {
+      console.error("Failed to update task:", error);
+      toast({
+        title: "Could not update task",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdatingTaskId(null);
+    }
+  };
+
+  const completed = useMemo(
+    () => tasks.filter((t) => t.completed).length,
+    [tasks],
+  );
+
+  const percentage = tasks.length
+    ? Math.round((completed / tasks.length) * 100)
+    : 0;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin" />
+        <span>Loading roadmap...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -26,9 +95,18 @@ const SkillRoadmap = () => {
 
       {/* Tasks */}
       <div className="space-y-2">
-        {roadmapTasks.map((t) => (
-          <RoadmapTaskItem key={t.id} task={{ ...t, id: Number(t.id) }} />
+        {tasks.map((task) => (
+          <RoadmapTaskItem
+            key={task.id}
+            task={task}
+            onToggle={(id) => void handleToggleTask(id)}
+            disabled={updatingTaskId === task.id}
+          />
         ))}
+
+        {tasks.length === 0 && (
+          <p className="text-sm text-muted-foreground">No roadmap tasks available right now.</p>
+        )}
       </div>
 
       {/* Recommended Courses */}
@@ -37,12 +115,13 @@ const SkillRoadmap = () => {
           Recommended Courses
         </h3>
         <div className="grid sm:grid-cols-2 gap-3">
-          {recommendedCourses.map((c) => (
-            <RecommendedCourseCard
-              key={c.id}
-              course={{ ...c, id: Number(c.id) }}
-            />
+          {courses.map((course) => (
+            <RecommendedCourseCard key={course.id} course={course} />
           ))}
+
+          {courses.length === 0 && (
+            <p className="text-sm text-muted-foreground">No courses available right now.</p>
+          )}
         </div>
       </div>
     </div>

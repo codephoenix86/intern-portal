@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import DashboardSidebar from "./DashboardSidebar";
-import NotificationBell from "./NotificationBell";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -56,7 +55,6 @@ const DashboardLayout = ({ children, sidebarItems, role, title }: DashboardLayou
             </button>
             <h1 className="font-semibold text-foreground">{title}</h1>
           </div>
-          <NotificationBell />
         </header>
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>

@@ -13,7 +13,23 @@ export interface IUser {
 
   // Student-specific
   phone: string | null;
+  college: string | null;
+  branch: string | null;
+  location: string | null;
+  cgpa: string | null;
+  semester: string | null;
+  experienceSummary: string | null;
   studentSkills: string[];
+  studentProjects: string[];
+  achievements: string[];
+  codingProfiles: {
+    leetcode: string | null;
+    codechef: string | null;
+    codeforces: string | null;
+    github: string | null;
+    linkedin: string | null;
+    portfolio: string | null;
+  };
   resumeUrl: string | null;
   parsedResume: Record<string, unknown> | null;
   profileViews: number;
@@ -88,9 +104,61 @@ const userSchema = new Schema<IUser>(
       default: null,
       trim: true,
     },
+    college: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 200,
+    },
+    branch: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 120,
+    },
+    location: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 120,
+    },
+    cgpa: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 10,
+    },
+    semester: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 50,
+    },
+    experienceSummary: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 2000,
+    },
     studentSkills: {
       type: [String],
       default: [],
+    },
+    studentProjects: {
+      type: [String],
+      default: [],
+    },
+    achievements: {
+      type: [String],
+      default: [],
+    },
+    codingProfiles: {
+      leetcode: { type: String, default: null, trim: true },
+      codechef: { type: String, default: null, trim: true },
+      codeforces: { type: String, default: null, trim: true },
+      github: { type: String, default: null, trim: true },
+      linkedin: { type: String, default: null, trim: true },
+      portfolio: { type: String, default: null, trim: true },
     },
     resumeUrl: {
       type: String,

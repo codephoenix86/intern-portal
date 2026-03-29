@@ -1,4 +1,5 @@
 import {
+  Cell,
   BarChart,
   Bar,
   XAxis,
@@ -6,24 +7,48 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { SKILL_DEMAND_DATA } from "@/constants/student.constants";
 
-const SkillDemandChart = () => {
+export interface SkillDemandPoint {
+  skill: string;
+  count: number;
+}
+
+interface SkillDemandChartProps {
+  data: SkillDemandPoint[];
+}
+
+const BAR_COLORS = [
+  "hsl(217, 71%, 53%)",
+  "hsl(162, 72%, 40%)",
+  "hsl(35, 92%, 56%)",
+  "hsl(275, 60%, 56%)",
+  "hsl(0, 72%, 51%)",
+  "hsl(196, 75%, 46%)",
+];
+
+const SkillDemandChart = ({ data }: SkillDemandChartProps) => {
   return (
     <div className="glass-card rounded-lg p-5">
       <h3 className="font-semibold text-foreground mb-4">
-        Top Skills in Demand
+        Skills You Use Most
       </h3>
       <ResponsiveContainer width="100%" height={200}>
-        <BarChart data={SKILL_DEMAND_DATA}>
+        <BarChart data={data} barCategoryGap="35%">
           <XAxis dataKey="skill" tick={{ fontSize: 12 }} />
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip />
           <Bar
             dataKey="count"
-            fill="hsl(217, 71%, 53%)"
+            barSize={20}
             radius={[4, 4, 0, 0]}
-          />
+          >
+            {data.map((item, index) => (
+              <Cell
+                key={`skill-${item.skill}-${index}`}
+                fill={BAR_COLORS[index % BAR_COLORS.length]}
+              />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

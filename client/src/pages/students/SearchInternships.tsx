@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import InternshipCard from "@/components/InternshipCard";
-import { jobService, type InternshipJob } from "@/services/jobService";
+import {
+  studentPortalService,
+  type StudentJobCard,
+} from "@/services/studentPortal.service";
 import { Loader2, SlidersHorizontal } from "lucide-react";
 
 const SearchInternships = () => {
   const [keyword, setKeyword] = useState("");
-  const [internships, setInternships] = useState<InternshipJob[]>([]);
+  const [internships, setInternships] = useState<StudentJobCard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -17,11 +20,11 @@ const SearchInternships = () => {
         setIsLoading(true);
 
         try {
-          const result = await jobService.getJobs({
+          const result = await studentPortalService.getJobs({
             keyword: keyword.trim() || undefined,
-            limit: 60,
+            sort: "newest",
           });
-          setInternships(result.data);
+          setInternships(result);
         } catch (error) {
           console.error("Failed to search internships:", error);
           setErrorMessage("Could not load internships right now. Please try again.");

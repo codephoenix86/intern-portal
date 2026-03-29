@@ -6,9 +6,9 @@ import {
   Brain,
   TrendingUp,
   Kanban,
-  Bell,
   Settings,
   Video,
+  User,
 } from "lucide-react";
 import type { SidebarItem } from "@/types/student.types";
 
@@ -49,14 +49,14 @@ export const STUDENT_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <Kanban className="h-4 w-4" />,
   },
   {
-    to: "/student/notifications",
-    label: "Notifications",
-    icon: <Bell className="h-4 w-4" />,
-  },
-  {
     to: "/student/settings",
     label: "Settings",
     icon: <Settings className="h-4 w-4" />,
+  },
+  {
+    to: "/student/profile",
+    label: "Profile",
+    icon: <User className="h-4 w-4" />,
   },
   {
     to: "/student/sessions",

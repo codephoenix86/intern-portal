@@ -36,6 +36,7 @@ export interface StudentQuizQuestion {
   question: string;
   options: string[];
   correct: number;
+  type: "concept" | "code" | "debug" | "scenario";
 }
 
 export interface StudentRoadmapTask {
@@ -117,9 +118,18 @@ export const studentPortalService = {
     return data.data.applications;
   },
 
-  getQuiz: async (): Promise<StudentQuizQuestion[]> => {
+  getQuiz: async (params: {
+    skill: string;
+    count: number;
+  }): Promise<StudentQuizQuestion[]> => {
     const { data } = await api.get<ApiEnvelope<StudentQuizResponse>>(
       "/student/content/quiz",
+      {
+        params: {
+          skill: params.skill,
+          count: params.count,
+        },
+      },
     );
     return data.data.questions;
   },

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import type { StudentProfile } from "@/services/studentProfile.service";
 
 interface ProfileSummaryCardProps {
@@ -113,20 +112,6 @@ const ProfileSummaryCard = ({
           <p className="text-sm text-muted-foreground">Match Score</p>
           <p className="text-2xl font-bold text-foreground">{matchScore}%</p>
           <p className="text-sm text-emerald-600">{improvementText}</p>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-foreground">Profile Completion</span>
-          <span className="text-sm text-primary font-semibold">{profile.profileCompletion}%</span>
-        </div>
-        <Progress value={profile.profileCompletion} className="h-2" />
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <p className="text-muted-foreground">Basic Info {checklist.basicInfo ? "✔" : "❌"}</p>
-          <p className="text-muted-foreground">Skills {checklist.skills ? "✔" : "❌"}</p>
-          <p className="text-muted-foreground">Resume {checklist.resume ? "✔" : "❌"}</p>
-          <p className="text-muted-foreground">Projects {checklist.projects ? "✔" : "❌"}</p>
         </div>
       </div>
 

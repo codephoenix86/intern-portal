@@ -31,6 +31,61 @@ export const SEED_QUIZ = [
   },
 ];
 
+export type SkillQuestionType = "concept" | "code" | "debug" | "scenario";
+
+export interface SkillQuestionSeed {
+  id: number;
+  question: string;
+  options: string[];
+  correct: number;
+  tags: string[];
+  type: SkillQuestionType;
+}
+
+export const SKILL_QUESTION_BANK: SkillQuestionSeed[] = [
+  { id: 101, question: "Which hook is best to memoize an expensive computed value in React?", options: ["useRef", "useMemo", "useEffect", "useLayoutEffect"], correct: 1, tags: ["react", "frontend"], type: "concept" },
+  { id: 102, question: "What is the key reason to use React keys in a list?", options: ["To style elements", "To preserve identity across renders", "To make API calls faster", "To reduce bundle size"], correct: 1, tags: ["react"], type: "concept" },
+  { id: 103, question: "In React, which issue is most likely when using array index as key for re-orderable lists?", options: ["Hydration mismatch", "Incorrect state mapping", "Type errors", "Event bubbling errors"], correct: 1, tags: ["react"], type: "debug" },
+  { id: 104, question: "A React page re-renders too often because a callback prop changes every render. What should you use?", options: ["useCallback", "useMemo", "useId", "useImperativeHandle"], correct: 0, tags: ["react"], type: "scenario" },
+  { id: 105, question: "Which statement is true about useEffect dependencies?", options: ["Dependencies can be omitted always", "Effect runs only on unmount", "Effect reruns when dependency values change", "Dependencies must include setState functions"], correct: 2, tags: ["react"], type: "code" },
+
+  { id: 201, question: "What is the output type of `typeof null` in JavaScript?", options: ["null", "undefined", "object", "number"], correct: 2, tags: ["javascript", "js"], type: "concept" },
+  { id: 202, question: "Which method creates a new array without mutating the original?", options: ["splice", "push", "map", "sort"], correct: 2, tags: ["javascript", "js"], type: "concept" },
+  { id: 203, question: "A promise chain skips a catch block. What is a common cause?", options: ["Using await", "Returning inside then without throwing", "Using const", "Calling finally"], correct: 1, tags: ["javascript", "js"], type: "debug" },
+  { id: 204, question: "Which snippet safely checks optional nested property `user.profile.name`?", options: ["user.profile.name", "user && user.profile && user.profile.name", "user?.profile?.name", "Both B and C"], correct: 3, tags: ["javascript", "js"], type: "code" },
+  { id: 205, question: "You need to process API responses one-by-one in order. Which is best?", options: ["forEach + async", "for...of + await", "Promise.race", "setTimeout"], correct: 1, tags: ["javascript", "js"], type: "scenario" },
+
+  { id: 301, question: "What does TypeScript primarily add to JavaScript?", options: ["JIT compilation", "Static typing", "Automatic memory management", "Threading"], correct: 1, tags: ["typescript", "ts"], type: "concept" },
+  { id: 302, question: "Which utility type makes all properties optional?", options: ["Readonly<T>", "Required<T>", "Partial<T>", "Pick<T, K>"], correct: 2, tags: ["typescript", "ts"], type: "concept" },
+  { id: 303, question: "Type error: `string | undefined` not assignable to `string`. Best fix?", options: ["Use any", "Narrow the value before assignment", "Disable strict mode", "Cast everything to unknown"], correct: 1, tags: ["typescript", "ts"], type: "debug" },
+  { id: 304, question: "Which is a valid way to define a string array in TypeScript?", options: ["let a: [string]", "let a: string[]", "let a: array<string>", "let a: strings"], correct: 1, tags: ["typescript", "ts"], type: "code" },
+  { id: 305, question: "A public SDK needs strict API contracts. Which TS feature helps most?", options: ["Enums only", "Interfaces and exported types", "setTimeout", "Decorators only"], correct: 1, tags: ["typescript", "ts"], type: "scenario" },
+
+  { id: 401, question: "Which SQL clause filters groups after aggregation?", options: ["WHERE", "GROUP BY", "HAVING", "ORDER BY"], correct: 2, tags: ["sql", "database"], type: "concept" },
+  { id: 402, question: "What does an INNER JOIN return?", options: ["All rows from left table", "All rows from right table", "Matching rows from both tables", "Non-matching rows only"], correct: 2, tags: ["sql", "database"], type: "concept" },
+  { id: 403, question: "A query is slow on `email` lookup. Most direct optimization?", options: ["Add index on email", "Use DISTINCT", "Use GROUP BY", "Add LIMIT 1000"], correct: 0, tags: ["sql", "database"], type: "debug" },
+  { id: 404, question: "Which query gives total orders per customer?", options: ["SELECT customer_id, COUNT(*) FROM orders GROUP BY customer_id", "SELECT * FROM orders WHERE customer_id", "SELECT COUNT(customer_id) FROM customers", "SELECT customer_id FROM orders ORDER BY COUNT(*)"], correct: 0, tags: ["sql", "database"], type: "code" },
+  { id: 405, question: "You need consistent updates across 3 related tables. Use?", options: ["View", "Stored procedure", "Transaction", "Temporary table"], correct: 2, tags: ["sql", "database"], type: "scenario" },
+
+  { id: 501, question: "In Node.js, what does the event loop primarily do?", options: ["Compile JavaScript", "Manage async callbacks", "Encrypt requests", "Optimize SQL"], correct: 1, tags: ["node", "node.js", "backend"], type: "concept" },
+  { id: 502, question: "Which Express middleware parses JSON body?", options: ["express.static", "express.urlencoded", "express.json", "express.router"], correct: 2, tags: ["node", "express", "backend"], type: "concept" },
+  { id: 503, question: "API crashes on invalid payload. What is best immediate fix?", options: ["Try/catch and schema validation", "Disable error logs", "Restart server every hour", "Use synchronous file reads"], correct: 0, tags: ["node", "express", "backend"], type: "debug" },
+  { id: 504, question: "Which status code is most correct for unauthorized access without token?", options: ["200", "401", "403", "500"], correct: 1, tags: ["node", "express", "backend"], type: "code" },
+  { id: 505, question: "You expect high traffic for read-heavy APIs. What helps most first?", options: ["Cache frequent responses", "Increase console.log", "Disable compression", "Use global variables"], correct: 0, tags: ["node", "backend"], type: "scenario" },
+
+  { id: 601, question: "Which Python data structure preserves insertion order and key-value pairs?", options: ["set", "tuple", "dict", "frozenset"], correct: 2, tags: ["python"], type: "concept" },
+  { id: 602, question: "What is the output of `len([1,2,3])`?", options: ["2", "3", "4", "Error"], correct: 1, tags: ["python"], type: "concept" },
+  { id: 603, question: "A Python script is slow in a loop appending strings. Better approach?", options: ["Use repeated + in loop", "Use list append and ''.join", "Use print for buffering", "Use global variables"], correct: 1, tags: ["python"], type: "debug" },
+  { id: 604, question: "Which statement correctly opens a file safely?", options: ["open('a.txt')", "with open('a.txt') as f:", "file.open('a.txt')", "openFile('a.txt')"], correct: 1, tags: ["python"], type: "code" },
+  { id: 605, question: "You need to process CSV and compute summary quickly. Best standard choice?", options: ["os module", "csv module", "socket module", "tkinter"], correct: 1, tags: ["python"], type: "scenario" },
+
+  { id: 701, question: "Which CSS layout is one-dimensional?", options: ["Grid", "Flexbox", "Table", "Float"], correct: 1, tags: ["css", "frontend"], type: "concept" },
+  { id: 702, question: "What does semantic HTML improve the most?", options: ["GPU rendering", "Accessibility and SEO", "Database speed", "Bundle size"], correct: 1, tags: ["html", "frontend"], type: "concept" },
+  { id: 703, question: "A button is not clickable because another layer overlaps. What CSS property to inspect first?", options: ["font-weight", "z-index", "letter-spacing", "overflow-wrap"], correct: 1, tags: ["css", "html", "frontend"], type: "debug" },
+  { id: 704, question: "Which Tailwind class applies horizontal padding of 1rem by default?", options: ["px-2", "px-4", "py-4", "m-4"], correct: 1, tags: ["css", "tailwind", "frontend"], type: "code" },
+  { id: 705, question: "Your page must look good on mobile first. Best approach?", options: ["Desktop-only media queries", "Mobile-first responsive CSS", "Inline styles everywhere", "Fixed width layout"], correct: 1, tags: ["css", "html", "frontend"], type: "scenario" },
+];
+
 export const DEFAULT_ROADMAP_TASKS = [
   { id: "1", title: "Complete React Fundamentals", completed: false, category: "Frontend" },
   { id: "2", title: "Learn TypeScript Basics", completed: false, category: "Frontend" },

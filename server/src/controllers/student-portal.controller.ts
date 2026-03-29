@@ -359,11 +359,18 @@ export const postParseResume = async (
   }
 };
 
-export const getQuiz = async (_req: Request, res: Response): Promise<void> => {
+export const getQuiz = async (req: Request, res: Response): Promise<void> => {
   try {
-    const data = studentContentService.getQuiz();
+    const skill = routeParam(req.query["skill"] as string | string[] | undefined);
+    const rawCount = routeParam(req.query["count"] as string | string[] | undefined);
+    const count = rawCount ? Number(rawCount) : undefined;
+    const data = studentContentService.getQuiz(skill, count);
     sendSuccess(res, 200, "OK", data);
   } catch (error) {
+    if (error instanceof AppError) {
+      sendError(res, error.statusCode, error.message);
+      return;
+    }
     console.error(error);
     sendError(res, 500, "Failed to load quiz");
   }

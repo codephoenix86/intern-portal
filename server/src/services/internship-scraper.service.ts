@@ -213,6 +213,12 @@ const scrapeInternshala = async (): Promise<InternshipRecord[]> => {
     "https://internshala.com/front-end-development-internship",
     "https://internshala.com/back-end-development-internship",
     "https://internshala.com/full-stack-development-internship",
+    "https://internshala.com/python-development-internship",
+    "https://internshala.com/java-development-internship",
+    "https://internshala.com/javascript-development-internship",
+    "https://internshala.com/data-science-internship",
+    "https://internshala.com/machine-learning-internship",
+    "https://internshala.com/artificial-intelligence-internship",
   ];
 
   const settled = await Promise.allSettled(
@@ -250,7 +256,8 @@ export const internshipScraperService = {
     params: InternshipSearchParams,
   ): Promise<{ internships: InternshipRecord[]; sourceWarnings: string[] }> => {
     const warnings: string[] = [];
-    const limit = Math.min(Math.max(params.limit ?? 25, 1), 100);
+    const defaultLimit = params.keyword ? 50 : 60;
+    const limit = Math.min(Math.max(params.limit ?? defaultLimit, 1), 200);
 
     let internships: InternshipRecord[] = [];
 

@@ -1,18 +1,52 @@
 import { useEffect, useState } from "react";
 import InternshipCard from "@/components/InternshipCard";
 import { Loader2 } from "lucide-react";
-import { studentPortalService, type StudentJobCard } from "@/services/studentPortal.service";
+import { jobService, type InternshipJob } from "@/services/jobService";
+import { studentProfileService } from "@/services/studentProfile.service";
+
+const normalize = (value: string): string => value.trim().toLowerCase();
+
+const computeMatchScore = (
+  internship: InternshipJob,
+  profileSkills: string[],
+): number => {
+  if (profileSkills.length === 0) return 0;
+
+  const internshipText = `${internship.title} ${internship.skills.join(" ")}`.toLowerCase();
+  const matched = profileSkills.filter((skill) => internshipText.includes(normalize(skill)));
+
+  if (matched.length === 0) {
+    return 0;
+  }
+
+  return Math.min(100, Math.round((matched.length / profileSkills.length) * 100));
+};
 
 const RecommendedInternships = () => {
-  const [recommended, setRecommended] = useState<StudentJobCard[]>([]);
+  const [recommended, setRecommended] = useState<InternshipJob[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const loadRecommended = async (): Promise<void> => {
       try {
-        const jobs = await studentPortalService.getRecommendedJobs();
-        setRecommended(jobs);
+        const [profile, scrapedResult] = await Promise.all([
+          studentProfileService.getProfile(),
+          jobService.getJobs({ limit: 150 }),
+        ]);
+
+        const profileSkills = profile.studentSkills.map(normalize).filter(Boolean);
+
+        const scored = scrapedResult.data
+          .map((internship) => ({
+            ...internship,
+            matchScore: computeMatchScore(internship, profileSkills),
+          }))
+          .filter((internship) => (internship.matchScore ?? 0) > 0)
+          .sort((a, b) => (b.matchScore ?? 0) - (a.matchScore ?? 0))
+          .slice(0, 24);
+
+        setRecommended(scored);
       } catch (error) {
         console.error("Failed to load recommended internships:", error);
         setErrorMessage("Could not load recommendations right now.");
@@ -50,7 +84,7 @@ const RecommendedInternships = () => {
 
         {!isLoading && !errorMessage && recommended.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            No recommendations yet. Add more skills and projects in your profile.
+            No matching recommendations yet. Add more skills in your profile.
           </p>
         )}
       </div>

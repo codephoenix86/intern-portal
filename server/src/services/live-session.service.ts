@@ -33,6 +33,143 @@ interface PaginatedResult {
 // ── Service Class ────────────────────────────────────
 
 class LiveSessionService {
+  private async ensureDemoSessionsForStudents(): Promise<void> {
+    const existingCount = await LiveSession.countDocuments({
+      status: { $in: ["scheduled", "live"] },
+      isCompleted: false,
+      topic: { $regex: "^Demo:", $options: "i" },
+    });
+
+    if (existingCount >= 6) {
+      return;
+    }
+
+    let mentorId = (await User.findOne({ role: "mentor" }).select("_id"))?._id;
+
+    if (!mentorId) {
+      const createdMentor = await User.create({
+        name: "Demo Mentor",
+        email: "demo.mentor@internportal.dev",
+        role: "mentor",
+        password: null,
+        provider: "local",
+      });
+      mentorId = createdMentor._id;
+    }
+
+    const today = new Date();
+    const addDays = (days: number): string => {
+      const d = new Date(today);
+      d.setDate(d.getDate() + days);
+      return d.toISOString().slice(0, 10);
+    };
+
+    const demoSessions: Array<{
+      topic: string;
+      description: string;
+      date: string;
+      time: string;
+      type: "free_demo" | "paid_class";
+      maxAttendees: number;
+      attendeeCount: number;
+      duration: number;
+      accessCode?: string;
+    }> = [
+      {
+        topic: "Demo: DSA Arrays and Strings",
+        description: "High-impact DSA fundamentals with guided problem solving.",
+        date: addDays(1),
+        time: "18:00",
+        type: "free_demo",
+        maxAttendees: 100,
+        attendeeCount: 32,
+        duration: 75,
+      },
+      {
+        topic: "Demo: Full Stack Project Architecture",
+        description: "Designing scalable MERN projects from idea to deployment.",
+        date: addDays(2),
+        time: "20:00",
+        type: "paid_class",
+        maxAttendees: 80,
+        attendeeCount: 24,
+        duration: 90,
+        accessCode: "FS2026",
+      },
+      {
+        topic: "Demo: AI/ML Roadmap and Model Basics",
+        description: "From Python basics to deploying your first ML model.",
+        date: addDays(3),
+        time: "17:30",
+        type: "free_demo",
+        maxAttendees: 120,
+        attendeeCount: 56,
+        duration: 80,
+      },
+      {
+        topic: "Demo: Resume and Interview Masterclass",
+        description: "Craft interview-ready profiles and answer strategies.",
+        date: addDays(4),
+        time: "19:00",
+        type: "free_demo",
+        maxAttendees: 150,
+        attendeeCount: 78,
+        duration: 60,
+      },
+      {
+        topic: "Demo: SQL for Placements",
+        description: "Top SQL patterns asked in internship and placement rounds.",
+        date: addDays(5),
+        time: "18:30",
+        type: "paid_class",
+        maxAttendees: 90,
+        attendeeCount: 40,
+        duration: 70,
+        accessCode: "SQL2026",
+      },
+      {
+        topic: "Demo: System Design Essentials",
+        description: "Build intuition for scalable systems with simple frameworks.",
+        date: addDays(6),
+        time: "21:00",
+        type: "free_demo",
+        maxAttendees: 110,
+        attendeeCount: 45,
+        duration: 85,
+      },
+    ];
+
+    for (const session of demoSessions) {
+      const alreadyExists = await LiveSession.findOne({
+        topic: session.topic,
+        date: session.date,
+      })
+        .select("_id")
+        .lean();
+
+      if (alreadyExists) continue;
+
+      await LiveSession.create({
+        mentorId,
+        courseId: null,
+        topic: session.topic,
+        description: session.description,
+        date: session.date,
+        time: session.time,
+        type: session.type,
+        duration: session.duration,
+        link: `https://meet.internportal.com/demo/${session.topic
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")}`,
+        accessCode: session.type === "paid_class" ? session.accessCode ?? "DEMO" : null,
+        maxAttendees: session.maxAttendees,
+        attendeeCount: session.attendeeCount,
+        status: "scheduled",
+        isCompleted: false,
+      });
+    }
+  }
+
   /**
    * Schedule a new live session
    */
@@ -132,6 +269,8 @@ class LiveSessionService {
   async getAvailableSessionsForStudents(
     query: AvailableSessionsQueryInput,
   ): Promise<PaginatedResult> {
+    await this.ensureDemoSessionsForStudents();
+
     const { page, limit, type } = query;
     const skip = (page - 1) * limit;
 

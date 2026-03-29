@@ -71,7 +71,19 @@ export const sessionQuerySchema = z.object({
   status: z.enum(["upcoming", "completed", "all"]).optional().default("all"),
 });
 
+// Student listing: GET /api/sessions/available
+export const availableSessionsQuerySchema = z.object({
+  page: z.string().optional().default("1").transform(Number),
+
+  limit: z.string().optional().default("20").transform(Number),
+
+  type: z.enum(["free_demo", "paid_class", "all"]).optional().default("all"),
+});
+
 // ── Export Types ──────────────────────────────────────
 export type CreateSessionInput = z.infer<typeof createSessionSchema>;
 export type UpdateSessionInput = z.infer<typeof updateSessionSchema>;
 export type SessionQueryInput = z.infer<typeof sessionQuerySchema>;
+export type AvailableSessionsQueryInput = z.infer<
+  typeof availableSessionsQuerySchema
+>;

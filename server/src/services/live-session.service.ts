@@ -11,6 +11,7 @@ import { AppError } from "./auth.service.js";
 import type {
   CreateSessionInput,
   UpdateSessionInput,
+  AvailableSessionsQueryInput,
 } from "../validators/live-session.validator.js";
 
 // ── Types ────────────────────────────────────────────
@@ -114,6 +115,42 @@ class LiveSessionService {
         .skip(skip)
         .limit(limit)
         .lean(),
+      LiveSession.countDocuments(filter),
+    ]);
+
+    return {
+      sessions: sessions as ILiveSession[],
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Upcoming / live sessions for the student catalog (browse & join).
+   */
+  async getAvailableSessionsForStudents(
+    query: AvailableSessionsQueryInput,
+  ): Promise<PaginatedResult> {
+    const { page, limit, type } = query;
+    const skip = (page - 1) * limit;
+
+    const filter: Record<string, unknown> = {
+      isCompleted: false,
+      status: { $in: ["scheduled", "live"] },
+    };
+
+    if (type !== "all") {
+      filter["type"] = type;
+    }
+
+    const [sessions, total] = await Promise.all([
+      LiveSession.find(filter)
+        .populate("courseId", "title")
+        .sort({ scheduledAt: 1 })
+        .skip(skip)
+        .limit(limit)
+        .lean({ virtuals: true }),
       LiveSession.countDocuments(filter),
     ]);
 

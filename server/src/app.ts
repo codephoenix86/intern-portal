@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import cookieParser from "cookie-parser";
 import requestIp from "request-ip";
 
@@ -6,6 +7,8 @@ import requestIp from "request-ip";
 import authRoutes from "./routes/auth.routes.js";
 import mentorRoutes from "./routes/mentor.routes.js";
 import sessionRoutes from "./routes/session.routes.js";
+import studentRoutes from "./routes/student.routes.js";
+import recruiterRoutes from "./routes/recruiter.routes.js";
 
 const app = express();
 
@@ -34,10 +37,18 @@ app.use((_req, res, next) => {
   next();
 });
 
+// ── Static uploads (resume files) ───────────────────
+app.use(
+  "/uploads",
+  express.static(path.join(process.cwd(), "uploads")),
+);
+
 // ── API Routes ───────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/mentor", mentorRoutes);
 app.use("/api/sessions", sessionRoutes);
+app.use("/api/student", studentRoutes);
+app.use("/api/recruiter", recruiterRoutes);
 
 // ── Health Check ─────────────────────────────────────
 app.get("/health", (_req, res) => {

@@ -13,6 +13,16 @@ export interface IUser {
 
   // Student-specific
   phone: string | null;
+  studentSkills: string[];
+  resumeUrl: string | null;
+  parsedResume: Record<string, unknown> | null;
+  profileViews: number;
+  roadmapTasks: Array<{
+    id: string;
+    title: string;
+    category: string;
+    completed: boolean;
+  }>;
 
   // Mentor-specific
   expertise: string[];
@@ -77,6 +87,34 @@ const userSchema = new Schema<IUser>(
       type: String,
       default: null,
       trim: true,
+    },
+    studentSkills: {
+      type: [String],
+      default: [],
+    },
+    resumeUrl: {
+      type: String,
+      default: null,
+    },
+    parsedResume: {
+      type: Schema.Types.Mixed,
+      default: null,
+    },
+    profileViews: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    roadmapTasks: {
+      type: [
+        {
+          id: { type: String, required: true },
+          title: { type: String, required: true },
+          category: { type: String, required: true },
+          completed: { type: Boolean, default: false },
+        },
+      ],
+      default: [],
     },
 
     // ── Mentor Fields ──

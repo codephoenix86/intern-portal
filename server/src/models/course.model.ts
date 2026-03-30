@@ -341,7 +341,6 @@ courseSchema.index({ mentorId: 1 });
 courseSchema.index({ isPublished: 1 });
 courseSchema.index({ category: 1 });
 courseSchema.index({ skills: 1 });
-courseSchema.index({ slug: 1 }, { unique: true });
 courseSchema.index({ level: 1, isPublished: 1 });
 courseSchema.index({ "pricing.amount": 1 });
 courseSchema.index({

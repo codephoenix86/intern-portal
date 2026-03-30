@@ -4,15 +4,28 @@ import { ENV } from "./config/env.js";
 
 const startServer = async (): Promise<void> => {
   try {
+    const startedAt = new Date();
+
+    console.log("========================================");
+    console.log("Backend starting...");
+    console.log(`Env: ${ENV.NODE_ENV}`);
+    console.log(`Port: ${ENV.PORT}`);
+    console.log(`Client URL: ${ENV.CLIENT_URL}`);
+    console.log(`Health: http://localhost:${ENV.PORT}/health`);
+    console.log("========================================");
+
     // 1. Connect to MongoDB
     await connectDB();
 
     // 2. Start Express server
     app.listen(ENV.PORT, () => {
-      console.log(`Listening on Port: ${ENV.PORT}`);
+      const uptimeMs = Date.now() - startedAt.getTime();
+      console.log("Server ready.");
+      console.log(`Listening: http://localhost:${ENV.PORT}`);
+      console.log(`Uptime (boot): ${uptimeMs}ms`);
     });
   } catch (error) {
-    console.error(" Failed to start server:", error);
+    console.error("Failed to start server:", error);
     process.exit(1);
   }
 };

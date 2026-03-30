@@ -136,6 +136,23 @@ Exact redirect URLs depend on `GOOGLE_REDIRECT_URI` and client configuration.
 
 ---
 
+### Avatar (upload + fetch)
+
+| Method | Path | Auth | Body |
+|--------|------|------|------|
+| POST | `/api/auth/me/avatar` | Yes | `multipart/form-data`, field name **`avatar`** |
+| GET | `/api/auth/me/avatar` | Yes | None |
+
+**Upload notes**:
+
+- Accepts: `image/jpeg`, `image/png`, `image/webp`
+- Size limit: 2MB
+- Stores on disk under `uploads/avatars/` and sets `user.avatar` to `/uploads/avatars/<filename>`
+
+**GET behavior**:
+
+- Responds with **302 redirect** to the stored `user.avatar` URL (typically `/uploads/avatars/<filename>`)
+
 ## Mentor — live sessions (`/api/mentor`)
 
 **All routes require**: `authenticate` + `authorize("mentor")`.
@@ -628,6 +645,8 @@ GET    /api/auth/google/callback
 POST   /api/auth/logout
 POST   /api/auth/logout-all
 GET    /api/auth/me
+POST   /api/auth/me/avatar
+GET    /api/auth/me/avatar
 
 POST   /api/mentor/sessions
 GET    /api/mentor/sessions

@@ -110,7 +110,10 @@ Errors:
 
 ### Static files
 
-Uploaded resumes are stored under `uploads/resumes/` and exposed at **`GET /uploads/...`** (not under `/api`). This directory is listed in `.gitignore`.
+Uploaded files are stored under `uploads/` and exposed at **`GET /uploads/...`** (not under `/api`). This directory is listed in `.gitignore`.
+
+- **Resumes**: `uploads/resumes/` → `GET /uploads/resumes/<filename>`
+- **Avatars**: `uploads/avatars/` → `GET /uploads/avatars/<filename>`
 
 ---
 

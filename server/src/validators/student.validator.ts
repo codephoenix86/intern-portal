@@ -24,6 +24,9 @@ export const updateStudentProfileSchema = z.object({
   studentSkills: z.array(z.string().trim().min(1)).max(50).optional(),
   studentProjects: z.array(z.string().trim().min(1)).max(20).optional(),
   achievements: z.array(z.string().trim().min(1)).max(30).optional(),
+  targetJobRole: z.string().trim().max(200).optional().nullable(),
+  targetSalary: z.number().min(0).optional().nullable(),
+  targetCompanies: z.array(z.string().trim().min(1)).max(50).optional(),
   codingProfiles: z
     .object({
       leetcode: z.string().trim().max(1000).optional().nullable(),

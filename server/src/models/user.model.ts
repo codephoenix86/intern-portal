@@ -22,6 +22,9 @@ export interface IUser {
   studentSkills: string[];
   studentProjects: string[];
   achievements: string[];
+  targetJobRole: string | null;
+  targetSalary: number | null;
+  targetCompanies: string[];
   codingProfiles: {
     leetcode: string | null;
     codechef: string | null;
@@ -150,6 +153,21 @@ const userSchema = new Schema<IUser>(
       default: [],
     },
     achievements: {
+      type: [String],
+      default: [],
+    },
+    targetJobRole: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: 200,
+    },
+    targetSalary: {
+      type: Number,
+      default: null,
+      min: 0,
+    },
+    targetCompanies: {
       type: [String],
       default: [],
     },

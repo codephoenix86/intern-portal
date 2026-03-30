@@ -57,6 +57,9 @@ class StudentProfileService {
       studentSkills: user.studentSkills ?? [],
       studentProjects: user.studentProjects ?? [],
       achievements: user.achievements ?? [],
+      targetJobRole: user.targetJobRole ?? null,
+      targetSalary: user.targetSalary ?? null,
+      targetCompanies: user.targetCompanies ?? [],
       codingProfiles: {
         leetcode: user.codingProfiles?.leetcode ?? null,
         codechef: user.codingProfiles?.codechef ?? null,
@@ -87,6 +90,9 @@ class StudentProfileService {
       studentSkills?: string[];
       studentProjects?: string[];
       achievements?: string[];
+      targetJobRole?: string | null;
+      targetSalary?: number | null;
+      targetCompanies?: string[];
       codingProfiles?: {
         leetcode?: string | null;
         codechef?: string | null;
@@ -121,6 +127,9 @@ class StudentProfileService {
     if (input.achievements !== undefined) {
       user.achievements = input.achievements;
     }
+    if (input.targetJobRole !== undefined) user.targetJobRole = input.targetJobRole;
+    if (input.targetSalary !== undefined) user.targetSalary = input.targetSalary;
+    if (input.targetCompanies !== undefined) user.targetCompanies = input.targetCompanies;
     if (input.codingProfiles !== undefined) {
       user.codingProfiles = {
         ...(user.codingProfiles ?? {}),

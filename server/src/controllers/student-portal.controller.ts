@@ -219,6 +219,9 @@ export const patchStudentProfile = async (
       studentSkills?: string[];
       studentProjects?: string[];
       achievements?: string[];
+      targetJobRole?: string | null;
+      targetSalary?: number | null;
+      targetCompanies?: string[];
       codingProfiles?: {
         leetcode?: string | null;
         codechef?: string | null;
@@ -245,6 +248,11 @@ export const patchStudentProfile = async (
       update.studentProjects = body.studentProjects;
     }
     if (body.achievements !== undefined) update.achievements = body.achievements;
+    if (body.targetJobRole !== undefined) update.targetJobRole = body.targetJobRole;
+    if (body.targetSalary !== undefined) update.targetSalary = body.targetSalary;
+    if (body.targetCompanies !== undefined) {
+      update.targetCompanies = body.targetCompanies;
+    }
     if (body.codingProfiles !== undefined) {
       const codingProfiles: {
         leetcode?: string | null;

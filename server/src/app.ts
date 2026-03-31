@@ -13,6 +13,7 @@ import recruiterRoutes from "./routes/recruiter.routes.js";
 import internshipRoutes from "./routes/internship.routes.js";
 import publicStudentsRoutes from "./routes/public-students.routes.js";
 import publicRecruitersRoutes from "./routes/public-recruiters.routes.js";
+import publicMentorsRoutes from "./routes/public-mentors.routes.js";
 
 const app = express();
 
@@ -81,6 +82,7 @@ app.use("/api/recruiter", recruiterRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/students", publicStudentsRoutes);
 app.use("/api/recruiters", publicRecruitersRoutes);
+app.use("/api/mentors", publicMentorsRoutes);
 
 // ── Health Check ─────────────────────────────────────
 app.get("/health", (_req, res) => {

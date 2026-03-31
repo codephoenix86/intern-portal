@@ -27,6 +27,8 @@ import MentorDashboard from "@/pages/mentor/MentorDashboard";
 // ── Fallback ─────────────────────────────────────────
 import NotFound from "@/pages/NotFound";
 import About from "./pages/About";
+import Recruiters from "./pages/recruiter/Recruiters";
+import PublicRecruiterProfile from "./pages/recruiter/PublicRecruiterProfile";
 
 const queryClient = new QueryClient();
 
@@ -44,12 +46,15 @@ const App = () => (
             <Route path="/internships/:id" element={<InternshipDetail />} />
             <Route path="/students" element={<Students />} />
             <Route path="/students/:id" element={<PublicStudentProfile />} />
+            <Route path="/recruiters" element={<Recruiters />} />
+            <Route
+              path="/recruiters/:id"
+              element={<PublicRecruiterProfile />}
+            />{" "}
             <Route path="/about" element={<About />} />
-
             {/* ── Auth ─── */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-
             {/* ── Protected Dashboards ── */}
             <Route
               path="/student/*"
@@ -83,7 +88,6 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-
             {/* ── 404 ── */}
             <Route path="*" element={<NotFound />} />
           </Routes>

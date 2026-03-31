@@ -38,6 +38,10 @@ export type PublicStudentsListResponse = {
   totalPages: number;
 };
 
+export type PublicStudentProfileResponse = {
+  student: PublicStudentCard;
+};
+
 export type PublicStudentsListParams = {
   page?: number;
   limit?: number;
@@ -59,6 +63,13 @@ export const publicStudentsService = {
       },
     });
 
+    return data.data;
+  },
+
+  getById: async (studentId: string): Promise<PublicStudentProfileResponse> => {
+    const { data } = await api.get<ApiEnvelope<PublicStudentProfileResponse>>(
+      `/students/${studentId}`,
+    );
     return data.data;
   },
 };

@@ -1,5 +1,5 @@
 import { sendError, sendSuccess } from "../utils/response.utils.js";
-import { publicStudentsListQuerySchema } from "../validators/public-students.validator.js";
+import { publicStudentParamsSchema, publicStudentsListQuerySchema, } from "../validators/public-students.validator.js";
 import { publicStudentsService } from "../services/public-students.service.js";
 export const listPublicStudents = async (req, res) => {
     try {
@@ -30,6 +30,25 @@ export const listPublicStudents = async (req, res) => {
     catch (error) {
         console.error("List public students error:", error);
         sendError(res, 500, "Failed to list students");
+    }
+};
+export const getPublicStudent = async (req, res) => {
+    try {
+        const parsed = publicStudentParamsSchema.safeParse(req.params);
+        if (!parsed.success) {
+            sendError(res, 400, "Invalid student id", parsed.error.flatten().fieldErrors);
+            return;
+        }
+        const data = await publicStudentsService.getById(parsed.data.studentId);
+        if (!data) {
+            sendError(res, 404, "Student not found");
+            return;
+        }
+        sendSuccess(res, 200, "OK", data);
+    }
+    catch (error) {
+        console.error("Get public student error:", error);
+        sendError(res, 500, "Failed to load student");
     }
 };
 //# sourceMappingURL=public-students.controller.js.map

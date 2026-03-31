@@ -13,6 +13,7 @@ import Index from "@/pages/students/Index";
 import Internships from "@/pages/students/Internships";
 import InternshipDetail from "@/pages/students/InternshipDetail";
 import Students from "@/pages/students/Students";
+import PublicStudentProfile from "@/pages/students/PublicStudentProfile";
 
 // ── Auth Pages ───────────────────────────────────────
 import Login from "@/pages/auth/Login";
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/internships" element={<Internships />} />
             <Route path="/internships/:id" element={<InternshipDetail />} />
             <Route path="/students" element={<Students />} />
+            <Route path="/students/:id" element={<PublicStudentProfile />} />
             <Route path="/about" element={<About />} />
 
             {/* ── Auth ─── */}

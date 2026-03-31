@@ -1,10 +1,16 @@
 import { Router } from "express";
-import { listPublicStudents } from "../controllers/public-students.controller.js";
+import {
+  getPublicStudent,
+  listPublicStudents,
+} from "../controllers/public-students.controller.js";
 
 const router = Router();
 
 // Public: list non-sensitive student profile cards
 router.get("/", listPublicStudents);
+
+// Public: fetch one non-sensitive student profile
+router.get("/:studentId", getPublicStudent);
 
 export default router;
 

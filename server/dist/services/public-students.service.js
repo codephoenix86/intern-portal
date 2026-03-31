@@ -91,6 +91,60 @@ class PublicStudentsService {
         const totalPages = Math.max(1, Math.ceil(total / limit));
         return { items, page, limit, total, totalPages };
     }
+    async getById(studentId) {
+        const doc = await User.findOne({
+            _id: studentId,
+            role: "student",
+            isActive: true,
+        })
+            .select([
+            "name",
+            "avatar",
+            "college",
+            "branch",
+            "location",
+            "bio",
+            "experienceSummary",
+            "studentSkills",
+            "studentProjects",
+            "achievements",
+            "codingProfiles",
+            "profileCompletion",
+            "updatedAt",
+        ].join(" "))
+            .lean();
+        if (!doc)
+            return null;
+        const out = {
+            id: doc._id.toString(),
+            name: doc.name,
+            studentSkills: doc.studentSkills ?? [],
+            studentProjects: doc.studentProjects ?? [],
+            achievements: doc.achievements ?? [],
+            profileCompletion: doc.profileCompletion ?? 0,
+            updatedAt: doc.updatedAt,
+        };
+        addIfPresent(out, "avatar", doc.avatar);
+        addIfPresent(out, "college", doc.college);
+        addIfPresent(out, "branch", doc.branch);
+        addIfPresent(out, "location", doc.location);
+        addIfPresent(out, "bio", doc.bio);
+        addIfPresent(out, "experienceSummary", doc.experienceSummary);
+        const coding = {};
+        const cp = doc.codingProfiles;
+        if (cp) {
+            addIfPresent(coding, "leetcode", cp.leetcode);
+            addIfPresent(coding, "codechef", cp.codechef);
+            addIfPresent(coding, "codeforces", cp.codeforces);
+            addIfPresent(coding, "github", cp.github);
+            addIfPresent(coding, "linkedin", cp.linkedin);
+            addIfPresent(coding, "portfolio", cp.portfolio);
+        }
+        if (Object.keys(coding).length > 0) {
+            out.codingProfiles = coding;
+        }
+        return { student: out };
+    }
 }
 export const publicStudentsService = new PublicStudentsService();
 //# sourceMappingURL=public-students.service.js.map

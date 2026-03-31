@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Search, SlidersHorizontal } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   publicStudentsService,
   type PublicStudentCard,
@@ -13,6 +14,7 @@ import {
 } from "@/services/publicStudents.service";
 
 const Students = () => {
+  const navigate = useNavigate();
   const [q, setQ] = useState("");
   const [debouncedQ, setDebouncedQ] = useState("");
   const [page, setPage] = useState(1);
@@ -115,7 +117,19 @@ const Students = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
           {!isLoading &&
             students.map((s) => (
-              <Card key={s.id} className="hover:shadow-md transition-shadow">
+              <Card
+                key={s.id}
+                role="button"
+                tabIndex={0}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate(`/students/${s.id}`)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(`/students/${s.id}`);
+                  }
+                }}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">

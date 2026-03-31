@@ -303,6 +303,57 @@ Example:
 }
 ```
 
+---
+
+### Get public student profile
+
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/api/students/:studentId` | No |
+
+**Path params**:
+
+| Param | Type | Notes |
+|-------|------|------|
+| `studentId` | string | Mongo ObjectId (24 hex chars). |
+
+**Response `data`**:
+
+- `{ student }`
+- `student` fields: same as list items (`id`, `name`, optional `avatar`, `college`, `branch`, `location`, `bio`, `experienceSummary`, arrays, optional `codingProfiles`, `profileCompletion`, `updatedAt`)
+
+Errors:
+
+- `400` if `studentId` is invalid
+- `404` if student does not exist or is not public/active
+
+Example:
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "student": {
+      "id": "65f000000000000000000000",
+      "name": "Student Name",
+      "college": "Example College",
+      "branch": "CSE",
+      "location": "Pune",
+      "studentSkills": ["React", "Node.js"],
+      "studentProjects": ["Career Navigator"],
+      "achievements": ["Hackathon finalist"],
+      "codingProfiles": {
+        "github": "https://github.com/example",
+        "linkedin": "https://linkedin.com/in/example"
+      },
+      "profileCompletion": 78,
+      "updatedAt": "2026-03-31T00:00:00.000Z"
+    }
+  }
+}
+```
+
 ## Student portal (`/api/student`)
 
 **All routes require**: `authenticate` + `authorize("student")`.

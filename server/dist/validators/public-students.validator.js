@@ -1,4 +1,8 @@
 import { z } from "zod";
+const mongoObjectIdSchema = z
+    .string()
+    .trim()
+    .regex(/^[0-9a-fA-F]{24}$/, "Invalid id");
 export const publicStudentsListQuerySchema = z.object({
     page: z
         .string()
@@ -25,5 +29,8 @@ export const publicStudentsListQuerySchema = z.object({
         .transform((s) => s ? s.split(",").map((x) => x.trim()).filter(Boolean).slice(0, 20) : undefined),
     sort: z.enum(["updatedAt", "name", "profileCompletion"]).optional().default("updatedAt"),
     order: z.enum(["asc", "desc"]).optional().default("desc"),
+});
+export const publicStudentParamsSchema = z.object({
+    studentId: mongoObjectIdSchema,
 });
 //# sourceMappingURL=public-students.validator.js.map

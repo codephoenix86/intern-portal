@@ -21,6 +21,7 @@ export type PublicStudentCard = {
     profileCompletion: number;
     updatedAt: Date;
 };
+export type PublicStudentProfile = PublicStudentCard;
 declare class PublicStudentsService {
     list(input: {
         page: number;
@@ -39,6 +40,9 @@ declare class PublicStudentsService {
         total: number;
         totalPages: number;
     }>;
+    getById(studentId: string): Promise<{
+        student: PublicStudentProfile;
+    } | null>;
 }
 export declare const publicStudentsService: PublicStudentsService;
 export {};

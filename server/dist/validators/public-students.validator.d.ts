@@ -17,4 +17,7 @@ export declare const publicStudentsListQuerySchema: z.ZodObject<{
         desc: "desc";
     }>>>;
 }, z.core.$strip>;
+export declare const publicStudentParamsSchema: z.ZodObject<{
+    studentId: z.ZodString;
+}, z.core.$strip>;
 //# sourceMappingURL=public-students.validator.d.ts.map

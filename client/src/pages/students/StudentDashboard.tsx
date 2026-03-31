@@ -1,5 +1,3 @@
-// client/src/pages/student/StudentDashboard.tsx
-
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
 import { STUDENT_SIDEBAR_ITEMS } from "@/constants/student.sidebar";
@@ -14,6 +12,9 @@ import Applications from "./Applications";
 import SettingsPage from "./SettingsPage";
 import StudentSessions from "./StudentSessions";
 import ProfilePage from "./ProfilePage";
+import DashboardStudents from "./DashboardStudents";
+import DashboardRecruiters from "./DashboardRecruiters";
+import DashboardMentors from "./DashboardMentors";
 
 const StudentDashboard = () => {
   return (
@@ -118,6 +119,46 @@ const StudentDashboard = () => {
             title="Applications"
           >
             <Applications />
+          </DashboardLayout>
+        }
+      />
+
+      {/* ── People Pages (NEW) ── */}
+      <Route
+        path="/people/students"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="Students"
+          >
+            <DashboardStudents />
+          </DashboardLayout>
+        }
+      />
+
+      <Route
+        path="/people/recruiters"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="Recruiters"
+          >
+            <DashboardRecruiters />
+          </DashboardLayout>
+        }
+      />
+
+      <Route
+        path="/people/mentors"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="Mentors"
+          >
+            <DashboardMentors />
           </DashboardLayout>
         }
       />

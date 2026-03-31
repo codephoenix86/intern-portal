@@ -9,6 +9,9 @@ import {
   Settings,
   Video,
   User,
+  Users,
+  Building2,
+  GraduationCap,
 } from "lucide-react";
 import type { SidebarItem } from "@/types/student.types";
 
@@ -49,9 +52,24 @@ export const STUDENT_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <Kanban className="h-4 w-4" />,
   },
   {
-    to: "/student/settings",
-    label: "Settings",
-    icon: <Settings className="h-4 w-4" />,
+    to: "/student/people/students",
+    label: "Students",
+    icon: <Users className="h-4 w-4" />,
+  },
+  {
+    to: "/student/people/recruiters",
+    label: "Recruiters",
+    icon: <Building2 className="h-4 w-4" />,
+  },
+  {
+    to: "/student/people/mentors",
+    label: "Mentors",
+    icon: <GraduationCap className="h-4 w-4" />,
+  },
+  {
+    to: "/student/sessions",
+    label: "Live Sessions",
+    icon: <Video className="h-4 w-4" />,
   },
   {
     to: "/student/profile",
@@ -59,8 +77,8 @@ export const STUDENT_SIDEBAR_ITEMS: SidebarItem[] = [
     icon: <User className="h-4 w-4" />,
   },
   {
-    to: "/student/sessions",
-    label: "Live Sessions",
-    icon: <Video className="h-4 w-4" />,
+    to: "/student/settings",
+    label: "Settings",
+    icon: <Settings className="h-4 w-4" />,
   },
 ];

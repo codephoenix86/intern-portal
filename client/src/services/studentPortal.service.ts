@@ -74,6 +74,10 @@ interface StudentJobsResponse {
   jobs: StudentJobCard[];
 }
 
+interface StudentJobDetailResponse {
+  job: StudentJobCard;
+}
+
 interface StudentApplicationsResponse {
   applications: StudentApplication[];
 }
@@ -120,6 +124,13 @@ export const studentPortalService = {
       "/student/jobs/recommended",
     );
     return data.data.jobs;
+  },
+
+  getJobById: async (jobId: string): Promise<StudentJobCard> => {
+    const { data } = await api.get<ApiEnvelope<StudentJobDetailResponse>>(
+      `/student/jobs/${jobId}`,
+    );
+    return data.data.job;
   },
 
   applyToJob: async (jobId: string): Promise<{ applicationId: string }> => {

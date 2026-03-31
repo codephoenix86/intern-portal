@@ -5,6 +5,9 @@ interface ListingCardProps {
   title: string;
   applicants: number;
   postedDate: string;
+  isActive?: boolean;
+  onClose?: (id: string) => void | Promise<void>;
+  isClosing?: boolean;
 }
 
 const ListingCard = ({
@@ -12,6 +15,9 @@ const ListingCard = ({
   title,
   applicants,
   postedDate,
+  isActive = true,
+  onClose,
+  isClosing = false,
 }: ListingCardProps) => {
   return (
     <div className="glass-card rounded-lg p-5 flex items-center justify-between">
@@ -26,7 +32,13 @@ const ListingCard = ({
         <Button size="sm" variant="outline">
           Edit
         </Button>
-        <Button size="sm" variant="outline" className="text-destructive">
+        <Button
+          size="sm"
+          variant="outline"
+          className="text-destructive"
+          disabled={!isActive || isClosing || !onClose}
+          onClick={() => onClose?.(id)}
+        >
           Close
         </Button>
       </div>

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
-import { jobService, type InternshipJob } from "@/services/jobService";
+import { combinedInternshipsService, type CombinedInternship } from "@/services/combinedInternships.service";
 import { useToast } from "@/hooks/use-toast";
 
 const Internships = () => {
@@ -13,7 +13,7 @@ const Internships = () => {
   const [keyword, setKeyword] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [locationFilter, setLocationFilter] = useState("all");
-  const [internships, setInternships] = useState<InternshipJob[]>([]);
+  const [internships, setInternships] = useState<CombinedInternship[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -28,8 +28,8 @@ const Internships = () => {
     setErrorMessage(null);
 
     try {
-      const result = await jobService.getJobs({ limit: 60 });
-      setInternships(result.data);
+      const result = await combinedInternshipsService.list({ limit: 120 });
+      setInternships(result.items);
 
       if (result.sourceWarnings.length > 0) {
         toast({

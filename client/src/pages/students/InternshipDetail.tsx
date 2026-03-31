@@ -5,7 +5,10 @@ import SkillTag from "@/components/SkillTag";
 import MatchScoreBadge from "@/components/MatchScoreBadge";
 import InternshipCard from "@/components/InternshipCard";
 import { Button } from "@/components/ui/button";
-import { jobService, type InternshipJob } from "@/services/jobService";
+import type { InternshipJob } from "@/services/jobService";
+import { combinedInternshipsService } from "@/services/combinedInternships.service";
+import { studentPortalService } from "@/services/studentPortal.service";
+import { useToast } from "@/hooks/use-toast";
 import { MapPin, Clock, Users, Building2, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 
 type InternshipDetailRecord = InternshipJob & {
@@ -21,12 +24,15 @@ const InternshipDetail = () => {
   const { id } = useParams();
   const location = useLocation();
   const state = location.state as InternshipLocationState | null;
+  const { toast } = useToast();
 
   const [internship, setInternship] = useState<InternshipDetailRecord | null>(
     state?.internship ?? null,
   );
   const [similar, setSimilar] = useState<InternshipJob[]>([]);
   const [isLoading, setIsLoading] = useState(!state?.internship);
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     const loadDetail = async (): Promise<void> => {
@@ -37,12 +43,37 @@ const InternshipDetail = () => {
 
       try {
         if (!state?.internship) {
-          const detailResult = await jobService.getJobById(id);
-          setInternship(detailResult.data);
+          // Try DB-backed job detail first (works for recruiter/seed jobs when logged in).
+          const dbJob = await studentPortalService
+            .getJobById(id)
+            .then((j) => ({
+              id: j.id,
+              title: j.title,
+              company: j.company,
+              location: j.location,
+              type: j.type,
+              duration: j.duration,
+              stipend: j.stipend,
+              skills: j.skills,
+              postedDate: j.postedDate,
+              applicants: j.applicants,
+              matchScore: j.matchScore,
+              description: j.description,
+              requirements: j.requirements,
+              applyUrl: undefined,
+            }))
+            .catch(() => null);
+
+          if (dbJob) {
+            setInternship(dbJob);
+          } else {
+            const combined = await combinedInternshipsService.list({ limit: 200 });
+            setInternship(combined.items.find((x) => x.id === id) ?? null);
+          }
         }
 
-        const listResult = await jobService.getJobs({ limit: 20 });
-        setSimilar(listResult.data.filter((item) => item.id !== id).slice(0, 3));
+        const combined = await combinedInternshipsService.list({ limit: 60 });
+        setSimilar(combined.items.filter((item) => item.id !== id).slice(0, 3));
       } catch (error) {
         console.error("Failed to load internship details:", error);
       } finally {
@@ -52,6 +83,38 @@ const InternshipDetail = () => {
 
     void loadDetail();
   }, [id, state?.internship]);
+
+  const applyOnPlatform = async (): Promise<void> => {
+    if (!id) {
+      toast({
+        title: "Cannot apply",
+        description: "Missing job id.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsApplying(true);
+      await studentPortalService.applyToJob(id);
+      setHasApplied(true);
+      toast({
+        title: "Application submitted",
+        description: "Your application has been sent to the recruiter.",
+      });
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ??
+        "Could not apply right now. Please try again.";
+      toast({
+        title: "Apply failed",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsApplying(false);
+    }
+  };
 
   const description = useMemo(() => {
     if (!internship) {
@@ -158,8 +221,13 @@ const InternshipDetail = () => {
               </Button>
             </a>
           ) : (
-            <Button size="lg" className="gradient-primary text-primary-foreground border-0" disabled>
-              Apply Link Unavailable
+            <Button
+              size="lg"
+              className="gradient-primary text-primary-foreground border-0"
+              disabled={isApplying || hasApplied}
+              onClick={() => void applyOnPlatform()}
+            >
+              {hasApplied ? "Applied" : isApplying ? "Applying..." : "Apply Now"}
             </Button>
           )}
         </div>

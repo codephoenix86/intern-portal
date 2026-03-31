@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import InternshipCard from "@/components/InternshipCard";
 import { Loader2 } from "lucide-react";
-import { jobService, type InternshipJob } from "@/services/jobService";
+import type { InternshipJob } from "@/services/jobService";
 import { studentProfileService } from "@/services/studentProfile.service";
+import { combinedInternshipsService } from "@/services/combinedInternships.service";
 
 const normalize = (value: string): string => value.trim().toLowerCase();
 
@@ -30,14 +31,14 @@ const RecommendedInternships = () => {
   useEffect(() => {
     const loadRecommended = async (): Promise<void> => {
       try {
-        const [profile, scrapedResult] = await Promise.all([
+        const [profile, combined] = await Promise.all([
           studentProfileService.getProfile(),
-          jobService.getJobs({ limit: 150 }),
+          combinedInternshipsService.list({ limit: 200 }),
         ]);
 
         const profileSkills = profile.studentSkills.map(normalize).filter(Boolean);
 
-        const scored = scrapedResult.data
+        const scored = combined.items
           .map((internship) => ({
             ...internship,
             matchScore: computeMatchScore(internship, profileSkills),

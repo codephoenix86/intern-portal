@@ -12,6 +12,7 @@ import studentRoutes from "./routes/student.routes.js";
 import recruiterRoutes from "./routes/recruiter.routes.js";
 import internshipRoutes from "./routes/internship.routes.js";
 import publicStudentsRoutes from "./routes/public-students.routes.js";
+import publicRecruitersRoutes from "./routes/public-recruiters.routes.js";
 
 const app = express();
 
@@ -37,9 +38,13 @@ const allowedOrigins = new Set([
 app.use((req, res, next) => {
   const requestOrigin = req.headers.origin;
   const isAllowedLocalhost =
-    typeof requestOrigin === "string" && /^http:\/\/localhost:\d+$/.test(requestOrigin);
+    typeof requestOrigin === "string" &&
+    /^http:\/\/localhost:\d+$/.test(requestOrigin);
 
-  if (requestOrigin && (allowedOrigins.has(requestOrigin) || isAllowedLocalhost)) {
+  if (
+    requestOrigin &&
+    (allowedOrigins.has(requestOrigin) || isAllowedLocalhost)
+  ) {
     res.header("Access-Control-Allow-Origin", requestOrigin);
   }
   res.header(
@@ -75,6 +80,7 @@ app.use("/api/student", studentRoutes);
 app.use("/api/recruiter", recruiterRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/students", publicStudentsRoutes);
+app.use("/api/recruiters", publicRecruitersRoutes);
 
 // ── Health Check ─────────────────────────────────────
 app.get("/health", (_req, res) => {

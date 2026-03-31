@@ -15,6 +15,7 @@ const Navbar = () => {
   const links = [
     { to: "/", label: "Home" },
     { to: "/internships", label: "Internships" },
+    { to: "/students", label: "Students" },
     { to: "/about", label: "About" },
   ];
 

@@ -12,6 +12,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Index from "@/pages/students/Index";
 import Internships from "@/pages/students/Internships";
 import InternshipDetail from "@/pages/students/InternshipDetail";
+import Students from "@/pages/students/Students";
 
 // ── Auth Pages ───────────────────────────────────────
 import Login from "@/pages/auth/Login";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/internships" element={<Internships />} />
             <Route path="/internships/:id" element={<InternshipDetail />} />
+            <Route path="/students" element={<Students />} />
             <Route path="/about" element={<About />} />
 
             {/* ── Auth ─── */}

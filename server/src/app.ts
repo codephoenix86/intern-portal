@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import cookieParser from "cookie-parser";
 import requestIp from "request-ip";
 
@@ -13,6 +14,11 @@ import internshipRoutes from "./routes/internship.routes.js";
 import publicStudentsRoutes from "./routes/public-students.routes.js";
 
 const app = express();
+
+// Ensure uploads dirs exist even if deleted manually.
+const uploadsDir = path.join(process.cwd(), "uploads");
+fs.mkdirSync(path.join(uploadsDir, "resumes"), { recursive: true });
+fs.mkdirSync(path.join(uploadsDir, "avatars"), { recursive: true });
 
 // ── Core Middleware ───────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
@@ -50,10 +56,16 @@ app.use((req, res, next) => {
 });
 
 // ── Static uploads (resume files) ───────────────────
-app.use(
-  "/uploads",
-  express.static(path.join(process.cwd(), "uploads")),
-);
+const serveUploads = express.static(uploadsDir, { fallthrough: true });
+app.use("/uploads", (req, res, next) => {
+  serveUploads(req, res, (err) => {
+    if (err && (err as { code?: string }).code === "ENOENT") {
+      res.sendStatus(404);
+      return;
+    }
+    next(err);
+  });
+});
 
 // ── API Routes ───────────────────────────────────────
 app.use("/api/auth", authRoutes);

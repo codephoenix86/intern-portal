@@ -12,6 +12,7 @@ export interface StatusPieItem {
 
 export interface Applicant {
   id: number;
+  applicationId: string;
   name: string;
   email: string;
   appliedFor: string;
@@ -21,4 +22,5 @@ export interface Applicant {
   experienceMatch: number;
   educationMatch: number;
   status: string;
+  resumeUrl?: string | null;
 }

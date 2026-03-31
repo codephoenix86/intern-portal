@@ -8,21 +8,23 @@ import {
 import { APPLICANT_STATUS_FILTERS } from "@/constants/recruiter.constants";
 
 interface ApplicantStatusSelectProps {
-  currentStatus: string;
+  value: string;
+  disabled?: boolean;
   onChange?: (value: string) => void;
 }
 
 const ApplicantStatusSelect = ({
-  currentStatus,
+  value,
+  disabled,
   onChange,
 }: ApplicantStatusSelectProps) => {
   // Filter out "all" — not a valid applicant status
   const statusOptions = APPLICANT_STATUS_FILTERS.filter((s) => s !== "all");
 
   return (
-    <Select onValueChange={onChange}>
+    <Select value={value} onValueChange={onChange} disabled={disabled}>
       <SelectTrigger className="w-40">
-        <SelectValue placeholder={currentStatus} />
+        <SelectValue placeholder={value} />
       </SelectTrigger>
       <SelectContent>
         {statusOptions.map((s) => (

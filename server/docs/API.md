@@ -10,6 +10,7 @@ All paths below are relative to that origin unless noted.
 | `/api/auth` | Authentication |
 | `/api/mentor` | Mentor (live sessions) |
 | `/api/sessions` | Student session catalog & join |
+| `/api/students` | Public students directory |
 | `/api/student` | Student portal (jobs, applications, profile, content) |
 | `/api/recruiter` | Recruiter portal (listings, applicants, company profile, notifications) |
 
@@ -46,9 +47,10 @@ Cookies may also carry tokens (see auth responses on login/register).
 2. [Authentication (`/api/auth`)](#authentication-apiauth)
 3. [Mentor — live sessions (`/api/mentor`)](#mentor--live-sessions-apimentor)
 4. [Sessions — student (`/api/sessions`)](#sessions--student-apisessions)
-5. [Student portal (`/api/student`)](#student-portal-apistudent)
-6. [Recruiter portal (`/api/recruiter`)](#recruiter-portal-apirecruiter)
-7. [Static files](#static-files)
+5. [Public students directory (`/api/students`)](#public-students-directory-apistudents)
+6. [Student portal (`/api/student`)](#student-portal-apistudent)
+7. [Recruiter portal (`/api/recruiter`)](#recruiter-portal-apirecruiter)
+8. [Static files](#static-files)
 
 ---
 
@@ -234,6 +236,72 @@ Exact redirect URLs depend on `GOOGLE_REDIRECT_URI` and client configuration.
 **Response `data`**: `{ link }` — URL to open for the meeting.
 
 ---
+
+## Public students directory (`/api/students`)
+
+Public endpoints for browsing **non-sensitive** student profile “cards”. No authentication is required.
+
+### List public students
+
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/api/students` | No |
+
+**Query**:
+
+| Param | Type | Default | Notes |
+|-------|------|---------|------|
+| `page` | number | 1 | Positive integer |
+| `limit` | number | 20 | 1–50 |
+| `q` | string | — | Name search (case-insensitive) |
+| `college` | string | — | Case-insensitive filter |
+| `branch` | string | — | Case-insensitive filter |
+| `location` | string | — | Case-insensitive filter |
+| `skills` | string | — | Comma-separated list (max 20). Filters by **all** skills (`$all`). Example: `skills=react,node` |
+| `sort` | string | `updatedAt` | `updatedAt` \| `name` \| `profileCompletion` |
+| `order` | string | `desc` | `asc` \| `desc` |
+
+**Response `data`**:
+
+- `{ items, page, limit, total, totalPages }`
+- `items[]` fields:
+  - `id`, `name`, optional `avatar`, `college`, `branch`, `location`, `bio`, `experienceSummary`
+  - `studentSkills: string[]`, `studentProjects: string[]`, `achievements: string[]`
+  - optional `codingProfiles` (subset of `leetcode`, `codechef`, `codeforces`, `github`, `linkedin`, `portfolio`)
+  - `profileCompletion: number`, `updatedAt: string` (ISO date)
+
+Example:
+
+```json
+{
+  "success": true,
+  "message": "OK",
+  "data": {
+    "items": [
+      {
+        "id": "65f000000000000000000000",
+        "name": "Student Name",
+        "college": "Example College",
+        "branch": "CSE",
+        "location": "Pune",
+        "studentSkills": ["React", "Node.js"],
+        "studentProjects": ["Career Navigator"],
+        "achievements": ["Hackathon finalist"],
+        "codingProfiles": {
+          "github": "https://github.com/example",
+          "linkedin": "https://linkedin.com/in/example"
+        },
+        "profileCompletion": 78,
+        "updatedAt": "2026-03-31T00:00:00.000Z"
+      }
+    ],
+    "page": 1,
+    "limit": 20,
+    "total": 1,
+    "totalPages": 1
+  }
+}
+```
 
 ## Student portal (`/api/student`)
 
@@ -657,6 +725,8 @@ DELETE /api/mentor/sessions/:id
 
 GET    /api/sessions/available
 POST   /api/sessions/:id/join
+
+GET    /api/students
 
 GET    /api/student/dashboard
 GET    /api/student/jobs/recommended

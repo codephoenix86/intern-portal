@@ -14,6 +14,8 @@ import Internships from "@/pages/students/Internships";
 import InternshipDetail from "@/pages/students/InternshipDetail";
 import Students from "@/pages/students/Students";
 import PublicStudentProfile from "@/pages/students/PublicStudentProfile";
+import Mentors from "@/pages/mentor/Mentors";
+import PublicMentorProfile from "@/pages/mentor/PublicMentorProfile";
 
 // ── Auth Pages ───────────────────────────────────────
 import Login from "@/pages/auth/Login";
@@ -51,6 +53,8 @@ const App = () => (
               path="/recruiters/:id"
               element={<PublicRecruiterProfile />}
             />{" "}
+            <Route path="/mentors" element={<Mentors />} />
+            <Route path="/mentors/:id" element={<PublicMentorProfile />} />{" "}
             <Route path="/about" element={<About />} />
             {/* ── Auth ─── */}
             <Route path="/login" element={<Login />} />

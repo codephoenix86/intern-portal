@@ -1,0 +1,20 @@
+import type { Request, Response } from "express";
+export declare const getDashboard: (req: Request, res: Response) => Promise<void>;
+export declare const listJobs: (req: Request, res: Response) => Promise<void>;
+export declare const listRecommended: (req: Request, res: Response) => Promise<void>;
+export declare const getJob: (req: Request, res: Response) => Promise<void>;
+export declare const getMatchScore: (req: Request, res: Response) => Promise<void>;
+export declare const applyToJob: (req: Request, res: Response) => Promise<void>;
+export declare const listApplications: (req: Request, res: Response) => Promise<void>;
+export declare const getStudentProfile: (req: Request, res: Response) => Promise<void>;
+export declare const patchStudentProfile: (req: Request, res: Response) => Promise<void>;
+export declare const postResumeUpload: (req: Request, res: Response) => Promise<void>;
+export declare const postParseResume: (req: Request, res: Response) => Promise<void>;
+export declare const getQuiz: (req: Request, res: Response) => Promise<void>;
+export declare const getRoadmap: (req: Request, res: Response) => Promise<void>;
+export declare const patchRoadmapTask: (req: Request, res: Response) => Promise<void>;
+export declare const getCourses: (req: Request, res: Response) => Promise<void>;
+export declare const listNotifications: (req: Request, res: Response) => Promise<void>;
+export declare const markNotificationRead: (req: Request, res: Response) => Promise<void>;
+export declare const markAllNotificationsRead: (req: Request, res: Response) => Promise<void>;
+//# sourceMappingURL=student-portal.controller.d.ts.map

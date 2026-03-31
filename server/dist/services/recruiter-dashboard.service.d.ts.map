@@ -1,0 +1,1 @@
+{"version":3,"file":"recruiter-dashboard.service.d.ts","sourceRoot":"","sources":["../../src/services/recruiter-dashboard.service.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,0BAA0B,EAAE,MAAM,oCAAoC,CAAC;AAErF,cAAM,yBAAyB;IACvB,YAAY,CAAC,WAAW,EAAE,MAAM;;;;;;;;kBAuD9B,0BAA0B;mBACzB,MAAM;;;IAFf,OAAO,CAAC,cAAc;YAaR,oBAAoB;CAkCnC;AAED,eAAO,MAAM,yBAAyB,2BAAkC,CAAC"}

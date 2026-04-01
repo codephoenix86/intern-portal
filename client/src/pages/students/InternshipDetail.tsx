@@ -5,11 +5,15 @@ import SkillTag from "@/components/SkillTag";
 import MatchScoreBadge from "@/components/MatchScoreBadge";
 import InternshipCard from "@/components/InternshipCard";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { InternshipJob } from "@/services/jobService";
 import { combinedInternshipsService } from "@/services/combinedInternships.service";
 import { studentPortalService } from "@/services/studentPortal.service";
+import { getMatch, getSuggestions, type MatchData, type SuggestionsData } from "@/services/matchService";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Clock, Users, Building2, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
+import { MapPin, Clock, Users, Building2, ArrowLeft, CheckCircle, Loader2, ExternalLink, BookOpen } from "lucide-react";
 
 type InternshipDetailRecord = InternshipJob & {
   description?: string;
@@ -33,6 +37,11 @@ const InternshipDetail = () => {
   const [isLoading, setIsLoading] = useState(!state?.internship);
   const [isApplying, setIsApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
+  const [matchData, setMatchData] = useState<MatchData | null>(null);
+  const [suggestions, setSuggestions] = useState<SuggestionsData | null>(null);
+  const [isLoadingMatch, setIsLoadingMatch] = useState(false);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadDetail = async (): Promise<void> => {
@@ -74,6 +83,23 @@ const InternshipDetail = () => {
 
         const combined = await combinedInternshipsService.list({ limit: 60 });
         setSimilar(combined.items.filter((item) => item.id !== id).slice(0, 3));
+
+        // Load match data if user is student
+        if (user?.role === "student" && id) {
+          setIsLoadingMatch(true);
+          try {
+            const [matchResult, suggestionsResult] = await Promise.all([
+              getMatch(user._id, id),
+              getSuggestions(user._id, id)
+            ]);
+            setMatchData(matchResult);
+            setSuggestions(suggestionsResult);
+          } catch (error) {
+            console.error("Failed to load match data:", error);
+          } finally {
+            setIsLoadingMatch(false);
+          }
+        }
       } catch (error) {
         console.error("Failed to load internship details:", error);
       } finally {
@@ -188,7 +214,7 @@ const InternshipDetail = () => {
                 <Building2 className="h-4 w-4" /> {internship.company}
               </div>
             </div>
-            <MatchScoreBadge score={internship.matchScore} size="lg" />
+            <MatchScoreBadge score={matchData?.score || internship.matchScore} size="lg" />
           </div>
 
           <div className="flex flex-wrap gap-4 mb-6 text-sm text-muted-foreground">
@@ -213,6 +239,55 @@ const InternshipDetail = () => {
               </li>
             ))}
           </ul>
+
+          {user?.role === "student" && matchData && (
+            <>
+              <h3 className="font-semibold text-foreground mb-2">Match Score</h3>
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm text-muted-foreground">Your match with this internship</span>
+                  <span className="text-sm font-medium">{Math.round(matchData.score)}%</span>
+                </div>
+                <Progress value={matchData.score} className="h-2" />
+              </div>
+
+              {matchData.missingSkills.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-semibold text-foreground mb-2">Missing Skills</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {matchData.missingSkills.map(skill => (
+                      <SkillTag key={skill} skill={skill} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {suggestions?.recommendedCourses.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="font-semibold text-foreground mb-2">Suggested Courses</h3>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {suggestions.recommendedCourses.map(course => (
+                      <Card key={course._id} className="hover:shadow-md transition-shadow">
+                        <CardHeader className="pb-2">
+                          <CardTitle className="text-sm flex items-center gap-2">
+                            <BookOpen className="h-4 w-4" />
+                            {course.name}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                          <Button variant="outline" size="sm" asChild>
+                            <a href={`/courses/${course.link}`} target="_blank" rel="noreferrer" className="flex items-center gap-1">
+                              View Course <ExternalLink className="h-3 w-3" />
+                            </a>
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
 
           {internship.applyUrl ? (
             <a href={internship.applyUrl} target="_blank" rel="noreferrer">

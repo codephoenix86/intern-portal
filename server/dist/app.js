@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import fs from "fs";
 import cookieParser from "cookie-parser";
 import requestIp from "request-ip";
 // Routes
@@ -10,7 +11,15 @@ import studentRoutes from "./routes/student.routes.js";
 import recruiterRoutes from "./routes/recruiter.routes.js";
 import internshipRoutes from "./routes/internship.routes.js";
 import publicStudentsRoutes from "./routes/public-students.routes.js";
+import publicRecruitersRoutes from "./routes/public-recruiters.routes.js";
+import publicMentorsRoutes from "./routes/public-mentors.routes.js";
+import connectionRoutes from "./routes/connection.routes.js";
+import matchRoutes from "./routes/match.routes.js";
 const app = express();
+// Ensure uploads dirs exist even if deleted manually.
+const uploadsDir = path.join(process.cwd(), "uploads");
+fs.mkdirSync(path.join(uploadsDir, "resumes"), { recursive: true });
+fs.mkdirSync(path.join(uploadsDir, "avatars"), { recursive: true });
 // ── Core Middleware ───────────────────────────────────
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
@@ -25,8 +34,10 @@ const allowedOrigins = new Set([
 ]);
 app.use((req, res, next) => {
     const requestOrigin = req.headers.origin;
-    const isAllowedLocalhost = typeof requestOrigin === "string" && /^http:\/\/localhost:\d+$/.test(requestOrigin);
-    if (requestOrigin && (allowedOrigins.has(requestOrigin) || isAllowedLocalhost)) {
+    const isAllowedLocalhost = typeof requestOrigin === "string" &&
+        /^http:\/\/localhost:\d+$/.test(requestOrigin);
+    if (requestOrigin &&
+        (allowedOrigins.has(requestOrigin) || isAllowedLocalhost)) {
         res.header("Access-Control-Allow-Origin", requestOrigin);
     }
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
@@ -39,7 +50,16 @@ app.use((req, res, next) => {
     next();
 });
 // ── Static uploads (resume files) ───────────────────
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+const serveUploads = express.static(uploadsDir, { fallthrough: true });
+app.use("/uploads", (req, res, next) => {
+    serveUploads(req, res, (err) => {
+        if (err && err.code === "ENOENT") {
+            res.sendStatus(404);
+            return;
+        }
+        next(err);
+    });
+});
 // ── API Routes ───────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/mentor", mentorRoutes);
@@ -48,6 +68,10 @@ app.use("/api/student", studentRoutes);
 app.use("/api/recruiter", recruiterRoutes);
 app.use("/api/internships", internshipRoutes);
 app.use("/api/students", publicStudentsRoutes);
+app.use("/api/recruiters", publicRecruitersRoutes);
+app.use("/api/mentors", publicMentorsRoutes);
+app.use("/api/connections", connectionRoutes);
+app.use("/api", matchRoutes);
 // ── Health Check ─────────────────────────────────────
 app.get("/health", (_req, res) => {
     res.json({ success: true, message: "InternPortal API is running 🚀" });

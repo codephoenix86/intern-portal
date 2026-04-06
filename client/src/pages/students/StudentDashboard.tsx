@@ -15,6 +15,9 @@ import ProfilePage from "./ProfilePage";
 import DashboardStudents from "./DashboardStudents";
 import DashboardRecruiters from "./DashboardRecruiters";
 import DashboardMentors from "./DashboardMentors";
+import CourseCatalog from "./CourseCatalog";
+import CourseDetail from "./CourseDetail";
+import MyEnrollments from "./MyEnrollments";
 
 const StudentDashboard = () => {
   return (
@@ -119,6 +122,45 @@ const StudentDashboard = () => {
             title="Applications"
           >
             <Applications />
+          </DashboardLayout>
+        }
+      />
+
+      <Route
+        path="/courses"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="Courses"
+          >
+            <CourseCatalog />
+          </DashboardLayout>
+        }
+      />
+
+      <Route
+        path="/courses/:courseId"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="Course"
+          >
+            <CourseDetail />
+          </DashboardLayout>
+        }
+      />
+
+      <Route
+        path="/enrollments"
+        element={
+          <DashboardLayout
+            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            role="student"
+            title="My courses"
+          >
+            <MyEnrollments />
           </DashboardLayout>
         }
       />

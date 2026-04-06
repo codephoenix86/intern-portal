@@ -383,6 +383,60 @@ Example:
 
 ---
 
+### My enrollments — list
+
+| Method | Path |
+|--------|------|
+| GET | `/api/student/enrollments` |
+
+**Response `data`**: `{ enrollments: [...] }` — each item includes `id`, `courseId`, `title`, `shortDescription`, `level`, `duration`, `category`, `skills`, `thumbnailUrl`, `progress`, `status`, `enrolledAt`.
+
+---
+
+### Course catalog — list
+
+| Method | Path |
+|--------|------|
+| GET | `/api/student/catalog/courses` |
+
+**Query**: `keyword`, `category` (optional; use `all` on the client to skip category filter), `page` (default 1), `limit` (default 20, max 50).
+
+**Response `data`**: `{ courses, total, page, totalPages }`. Each course card includes `id`, `title`, `shortDescription`, `level`, `duration`, `category`, `skills`, `thumbnailUrl`, `enrollmentCount`, `pricing`, `enrolled` (whether the current student has an active or completed enrollment).
+
+**Note**: If there are no published courses but at least one mentor user exists, the server may insert minimal demo catalog entries on first access.
+
+---
+
+### Course catalog — detail
+
+| Method | Path |
+|--------|------|
+| GET | `/api/student/catalog/courses/:courseId` |
+
+**Response `data`**: `{ course, enrolled, enrollment }` — `course` includes full `description`, `modules` (lightweight list), `mentorName`, etc.; `enrollment` is non-null when the student is enrolled (active or completed).
+
+---
+
+### Course catalog — enroll
+
+| Method | Path |
+|--------|------|
+| POST | `/api/student/catalog/courses/:courseId/enroll` |
+
+Creates an enrollment (or re-activates a previously dropped one). **Response `data`**: `{ enrollmentId: string }`. **Errors**: 400 if already enrolled; 404 if the course is missing or not published.
+
+---
+
+### Course catalog — leave (unenroll)
+
+| Method | Path |
+|--------|------|
+| DELETE | `/api/student/catalog/courses/:courseId/enroll` |
+
+Sets enrollment status to `dropped` for active enrollments. **Errors**: 400 if completed; 404 if not enrolled.
+
+---
+
 ### Jobs — list
 
 | Method | Path |

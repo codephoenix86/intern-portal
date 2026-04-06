@@ -12,6 +12,8 @@ import {
   Users,
   Building2,
   GraduationCap,
+  BookOpen,
+  Library,
 } from "lucide-react";
 import type { SidebarItem } from "@/types/student.types";
 
@@ -50,6 +52,16 @@ export const STUDENT_SIDEBAR_ITEMS: SidebarItem[] = [
     to: "/student/applications",
     label: "Applications",
     icon: <Kanban className="h-4 w-4" />,
+  },
+  {
+    to: "/student/courses",
+    label: "Courses",
+    icon: <BookOpen className="h-4 w-4" />,
+  },
+  {
+    to: "/student/enrollments",
+    label: "My courses",
+    icon: <Library className="h-4 w-4" />,
   },
   {
     to: "/student/people/students",

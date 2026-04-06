@@ -21,10 +21,23 @@ import {
   markNotificationRead,
   markAllNotificationsRead,
 } from "../controllers/student-portal.controller.js";
+import {
+  listCatalogCourses,
+  getCatalogCourse,
+  enrollCatalogCourse,
+  unenrollCatalogCourse,
+  listMyEnrollments,
+} from "../controllers/student-course.controller.js";
 
 const router = Router();
 
 router.use(authenticate, authorize("student"));
+
+router.get("/enrollments", listMyEnrollments);
+router.get("/catalog/courses", listCatalogCourses);
+router.get("/catalog/courses/:courseId", getCatalogCourse);
+router.post("/catalog/courses/:courseId/enroll", enrollCatalogCourse);
+router.delete("/catalog/courses/:courseId/enroll", unenrollCatalogCourse);
 
 router.get("/dashboard", getDashboard);
 

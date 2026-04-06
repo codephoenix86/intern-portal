@@ -9,6 +9,7 @@ import type {
 // ── Sidebar Labels + Routes (no icons here) ──────────────────
 export const SIDEBAR_ROUTES = [
   { to: "/mentor", label: "Dashboard" },
+  { to: "/mentor/courses", label: "Courses" },
   { to: "/mentor/trainings", label: "Skill Trainings" },
   { to: "/mentor/classes", label: "Classes" },
   { to: "/mentor/students", label: "Students" },

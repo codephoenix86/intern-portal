@@ -9,6 +9,9 @@ fs.mkdirSync(uploadDir, { recursive: true });
 const avatarDir = path.join(process.cwd(), "uploads", "avatars");
 fs.mkdirSync(avatarDir, { recursive: true });
 
+const courseContentDir = path.join(process.cwd(), "uploads", "course-content");
+fs.mkdirSync(courseContentDir, { recursive: true });
+
 const storage = multer.diskStorage({
   destination: (_req: Request, _file, cb) => {
     cb(null, uploadDir);
@@ -63,5 +66,34 @@ export const avatarUpload = multer({
       return;
     }
     cb(new Error("Only JPG, PNG, or WEBP images are allowed"));
+  },
+});
+
+const courseContentStorage = multer.diskStorage({
+  destination: (_req: Request, _file, cb) => {
+    cb(null, courseContentDir);
+  },
+  filename: (req: Request, file, cb) => {
+    const userId = req.user?.userId ?? "anon";
+    const ext = path.extname(file.originalname) || ".bin";
+    cb(null, `${userId}-${Date.now()}${ext}`);
+  },
+});
+
+export const courseContentUpload = multer({
+  storage: courseContentStorage,
+  limits: { fileSize: 80 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = [
+      "application/pdf",
+      "video/mp4",
+      "video/webm",
+      "application/octet-stream",
+    ];
+    if (allowed.includes(file.mimetype)) {
+      cb(null, true);
+      return;
+    }
+    cb(new Error("Only PDF, MP4, or WEBM video files are allowed"));
   },
 });

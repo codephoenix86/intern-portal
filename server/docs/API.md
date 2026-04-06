@@ -8,7 +8,7 @@ All paths below are relative to that origin unless noted.
 | Prefix | Module |
 |--------|--------|
 | `/api/auth` | Authentication |
-| `/api/mentor` | Mentor (live sessions) |
+| `/api/mentor` | Mentor (courses, live sessions) |
 | `/api/sessions` | Student session catalog & join |
 | `/api/students` | Public students directory |
 | `/api/student` | Student portal (jobs, applications, profile, content) |
@@ -159,6 +159,8 @@ Exact redirect URLs depend on `GOOGLE_REDIRECT_URI` and client configuration.
 
 **All routes require**: `authenticate` + `authorize("mentor")`.
 
+Course management routes are listed under [Mentor — courses](#mentor--courses) (same `/api/mentor` prefix). Register **specific** paths (e.g. `/courses/:courseId/students`) before generic `/courses/:courseId` on the server.
+
 ### Create session
 
 | Method | Path | Body (JSON) |
@@ -210,6 +212,86 @@ Exact redirect URLs depend on `GOOGLE_REDIRECT_URI` and client configuration.
 | Method | Path |
 |--------|------|
 | DELETE | `/api/mentor/sessions/:id` |
+
+---
+
+## Mentor — courses (`/api/mentor`)
+
+**All routes require**: `authenticate` + `authorize("mentor")`. Only the mentor who owns `Course.mentorId` may access that course.
+
+### List my courses
+
+| Method | Path |
+|--------|------|
+| GET | `/api/mentor/courses` |
+
+**Response `data`**: `{ courses: [{ id, title, shortDescription, level, duration, category, isPublished, enrollmentCount, moduleCount, updatedAt }] }`.
+
+---
+
+### Create course
+
+| Method | Path | Body (JSON) |
+|--------|------|-------------|
+| POST | `/api/mentor/courses` | `title`, `description`, optional `shortDescription`, `level`, `duration`, `skills[]`, `category`, optional `pricing` (`amount`, `currency`, `discountPercent`), optional `isPublished` |
+
+**Response `data`**: `{ courseId }`.
+
+---
+
+### Enrolled students (roster)
+
+| Method | Path |
+|--------|------|
+| GET | `/api/mentor/courses/:courseId/students` |
+
+**Response `data`**: `{ courseTitle, students: [{ enrollmentId, studentId, name, email, avatar, progress, status, enrolledAt }] }`.
+
+---
+
+### Get one course (full)
+
+| Method | Path |
+|--------|------|
+| GET | `/api/mentor/courses/:courseId` |
+
+**Response `data`**: `{ course }` — includes `modules` with `id`, titles, `contentUrl`, etc.
+
+---
+
+### Update course
+
+| Method | Path | Body (JSON) |
+|--------|------|-------------|
+| PATCH | `/api/mentor/courses/:courseId` | At least one of: `title`, `description`, `shortDescription`, `level`, `duration`, `skills`, `category`, `pricing`, `isPublished`, `thumbnailUrl`, `previewVideoUrl` |
+
+---
+
+### Add module
+
+| Method | Path | Body (JSON) |
+|--------|------|-------------|
+| POST | `/api/mentor/courses/:courseId/modules` | `title`, optional `description`, `contentType` (`video` \| `pdf` \| `notes` \| `link`), optional `duration`, `isFree`, `order` |
+
+**Response `data`**: `{ moduleId }`.
+
+---
+
+### Update module
+
+| Method | Path | Body (JSON) |
+|--------|------|-------------|
+| PATCH | `/api/mentor/courses/:courseId/modules/:moduleId` | At least one field: `title`, `description`, `contentType`, `duration`, `isFree`, `order`, `contentUrl` (absolute URL or app path like `/uploads/...`) |
+
+---
+
+### Upload module file (PDF / video)
+
+| Method | Path | Body |
+|--------|------|------|
+| POST | `/api/mentor/courses/:courseId/modules/:moduleId/content` | `multipart/form-data`, field name **`file`** (PDF, MP4, WEBM; max ~80MB) |
+
+**Response `data`**: `{ url, moduleId }` — `url` is under `/uploads/course-content/`.
 
 ---
 
@@ -821,6 +903,15 @@ GET    /api/auth/me
 POST   /api/auth/me/avatar
 GET    /api/auth/me/avatar
 
+GET    /api/mentor/courses
+POST   /api/mentor/courses
+GET    /api/mentor/courses/:courseId/students
+GET    /api/mentor/courses/:courseId
+PATCH  /api/mentor/courses/:courseId
+POST   /api/mentor/courses/:courseId/modules
+PATCH  /api/mentor/courses/:courseId/modules/:moduleId
+POST   /api/mentor/courses/:courseId/modules/:moduleId/content
+
 POST   /api/mentor/sessions
 GET    /api/mentor/sessions
 GET    /api/mentor/sessions/:id
@@ -867,7 +958,7 @@ PATCH  /api/recruiter/notifications/:id/read
 POST   /api/recruiter/notifications/read-all
 ```
 
-Order matters on the client: `/api/student/jobs/recommended` must be registered before `/api/student/jobs/:jobId` (already correct on the server). For recruiter, static path `/api/recruiter/jobs/:jobId` is registered after `/api/recruiter/jobs` (already correct).
+Order matters on the client: `/api/student/jobs/recommended` must be registered before `/api/student/jobs/:jobId` (already correct on the server). For recruiter, static path `/api/recruiter/jobs/:jobId` is registered after `/api/recruiter/jobs` (already correct). For mentor, `/api/mentor/courses/:courseId/students` is registered before `/api/mentor/courses/:courseId` (already correct on the server).
 
 ---
 

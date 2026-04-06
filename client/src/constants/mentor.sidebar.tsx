@@ -1,6 +1,7 @@
 import {
   LayoutDashboard,
   BookOpen,
+  Library,
   Video,
   Users,
   ClipboardList,
@@ -14,6 +15,7 @@ import type { SidebarItem } from "@/types/mentor.types";
 // Icons mapped by route order
 const SIDEBAR_ICONS = [
   <LayoutDashboard className="h-4 w-4" />,
+  <Library className="h-4 w-4" />,
   <BookOpen className="h-4 w-4" />,
   <Video className="h-4 w-4" />,
   <Users className="h-4 w-4" />,

@@ -11,6 +11,11 @@ import MentorAssignments from "./MentorAssignments";
 import MentorProgress from "./MentorProgress";
 import MentorMessages from "./MentorMessage";
 import MentorSettings from "./MentorSetting";
+import MentorCoursesPage from "./MentorCoursesPage";
+import MentorCourseNewPage from "./MentorCourseNewPage";
+import MentorCourseDetailPage from "./MentorCourseDetailPage";
+import MentorCourseStudentsPage from "./MentorCourseStudentsPage";
+
 const MentorDashboard = () => {
   return (
     <Routes>
@@ -19,6 +24,42 @@ const MentorDashboard = () => {
         element={
           <MentorLayout title="Dashboard">
             <MentorHome />
+          </MentorLayout>
+        }
+      />
+
+      <Route
+        path="/courses"
+        element={
+          <MentorLayout title="Courses">
+            <MentorCoursesPage />
+          </MentorLayout>
+        }
+      />
+
+      <Route
+        path="/courses/new"
+        element={
+          <MentorLayout title="New course">
+            <MentorCourseNewPage />
+          </MentorLayout>
+        }
+      />
+
+      <Route
+        path="/courses/:courseId/students"
+        element={
+          <MentorLayout title="Enrolled students">
+            <MentorCourseStudentsPage />
+          </MentorLayout>
+        }
+      />
+
+      <Route
+        path="/courses/:courseId"
+        element={
+          <MentorLayout title="Course">
+            <MentorCourseDetailPage />
           </MentorLayout>
         }
       />

@@ -1,10 +1,12 @@
 import ListingCard from "@/components/recruiter/ListingCard";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { recruiterPortalService, type RecruiterJob } from "@/services/recruiterPortal.service";
 import { useToast } from "@/hooks/use-toast";
 
 const MyListings = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<RecruiterJob[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [closingId, setClosingId] = useState<string | null>(null);
@@ -57,6 +59,7 @@ const MyListings = () => {
             postedDate={i.postedDate}
             isActive={i.isActive}
             isClosing={closingId === i.id}
+            onEdit={(id) => navigate(`/recruiter/post?edit=${encodeURIComponent(id)}`)}
             onClose={(id) => void closeJob(id)}
           />
         ))

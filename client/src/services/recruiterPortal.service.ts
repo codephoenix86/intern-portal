@@ -44,6 +44,8 @@ export type CreateRecruiterJobPayload = {
   requirements?: string[];
 };
 
+export type UpdateRecruiterJobPayload = Partial<CreateRecruiterJobPayload>;
+
 export const recruiterPortalService = {
   getDashboard: async (): Promise<RecruiterDashboardResponse> => {
     const { data } = await api.get<ApiEnvelope<RecruiterDashboardResponse>>(
@@ -59,11 +61,29 @@ export const recruiterPortalService = {
     return data.data.jobs;
   },
 
+  getJob: async (jobId: string): Promise<RecruiterJob> => {
+    const { data } = await api.get<ApiEnvelope<{ job: RecruiterJob }>>(
+      `/recruiter/jobs/${jobId}`,
+    );
+    return data.data.job;
+  },
+
   createJob: async (
     payload: CreateRecruiterJobPayload,
   ): Promise<{ jobId: string }> => {
     const { data } = await api.post<ApiEnvelope<{ jobId: string }>>(
       "/recruiter/jobs",
+      payload,
+    );
+    return data.data;
+  },
+
+  updateJob: async (
+    jobId: string,
+    payload: UpdateRecruiterJobPayload,
+  ): Promise<{ jobId: string }> => {
+    const { data } = await api.patch<ApiEnvelope<{ jobId: string }>>(
+      `/recruiter/jobs/${jobId}`,
       payload,
     );
     return data.data;

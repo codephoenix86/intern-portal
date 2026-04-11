@@ -3,9 +3,10 @@ import type { Assignment } from "@/types/mentor.types";
 
 interface AssignmentCardProps {
   assignment: Assignment;
+  onReview?: (assignment: Assignment) => void;
 }
 
-const AssignmentCard = ({ assignment }: AssignmentCardProps) => {
+const AssignmentCard = ({ assignment, onReview }: AssignmentCardProps) => {
   return (
     <div className="glass-card rounded-lg p-5 flex justify-between items-center">
       <div>
@@ -18,7 +19,9 @@ const AssignmentCard = ({ assignment }: AssignmentCardProps) => {
         </p>
       </div>
 
-      <Button variant="outline">Review</Button>
+      <Button variant="outline" onClick={() => onReview?.(assignment)}>
+        Review
+      </Button>
     </div>
   );
 };

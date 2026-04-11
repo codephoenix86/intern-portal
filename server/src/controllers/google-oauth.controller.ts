@@ -5,20 +5,20 @@ import { sendError } from "../utils/response.utils.js";
 import { ENV } from "../config/env.js";
 
 // ── Cookie Options (reuse from auth controller) ──────
+const isProd = ENV.NODE_ENV === "production";
+
 const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: ENV.NODE_ENV === "production",
-  sameSite:
-    ENV.NODE_ENV === "production" ? ("strict" as const) : ("lax" as const),
+  secure: isProd,
+  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
   path: "/api/auth",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
 const ACCESS_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: ENV.NODE_ENV === "production",
-  sameSite:
-    ENV.NODE_ENV === "production" ? ("strict" as const) : ("lax" as const),
+  secure: isProd,
+  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
   path: "/",
   maxAge: 15 * 60 * 1000,
 };
@@ -26,8 +26,8 @@ const ACCESS_TOKEN_COOKIE_OPTIONS = {
 // OAuth state cookie options (short-lived)
 const OAUTH_STATE_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: ENV.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  secure: isProd,
+  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
   path: "/",
   maxAge: 10 * 60 * 1000, // 10 minutes
 };

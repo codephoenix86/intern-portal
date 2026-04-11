@@ -7,20 +7,22 @@ import { ENV } from "../config/env.js";
 import { User } from "../models/user.model.js";
 
 // ── Cookie Options ───────────────────────────────────
+// Production: SameSite=None + Secure so cookies are sent on cross-origin
+// requests (e.g. Vercel UI → Render API). Local dev stays Lax over HTTP.
+const isProd = ENV.NODE_ENV === "production";
+
 const REFRESH_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: ENV.NODE_ENV === "production",
-  sameSite:
-    ENV.NODE_ENV === "production" ? ("strict" as const) : ("lax" as const),
+  secure: isProd,
+  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
   path: "/api/auth",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
 };
 
 const ACCESS_TOKEN_COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: ENV.NODE_ENV === "production",
-  sameSite:
-    ENV.NODE_ENV === "production" ? ("strict" as const) : ("lax" as const),
+  secure: isProd,
+  sameSite: (isProd ? "none" : "lax") as "none" | "lax",
   path: "/",
   maxAge: 15 * 60 * 1000, // 15 min in ms
 };

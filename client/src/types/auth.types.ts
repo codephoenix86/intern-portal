@@ -1,6 +1,7 @@
-// client/src/types/auth.types.ts
-
 export type UserRole = "student" | "recruiter" | "mentor";
+
+// User's role can be null if they signed up via OAuth without selecting a role
+export type UserRoleOrNull = UserRole | null;
 
 export interface LoginFormData {
   email: string;

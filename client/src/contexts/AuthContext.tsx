@@ -12,11 +12,13 @@ import {
   registerUser,
   logoutUser,
   logoutAllDevices,
+  selectUserRole,
   type User,
   type RegisterPayload,
   type LoginPayload,
 } from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
+import type { UserRole } from "@/types/auth.types";
 
 // ── Types ────────────────────────────────────────────
 
@@ -24,6 +26,7 @@ interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  needsRoleSelection: boolean; // ← NEW
 }
 
 interface AuthContextType extends AuthState {
@@ -32,6 +35,7 @@ interface AuthContextType extends AuthState {
   logout: () => Promise<void>;
   logoutAll: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  selectRole: (role: UserRole) => Promise<void>; // ← NEW
 }
 
 // ── Context ──────────────────────────────────────────
@@ -50,12 +54,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user: null,
     isAuthenticated: false,
     isLoading: true,
+    needsRoleSelection: false,
   });
 
   // ── Initialize: OAuth query params + existing session ──
-  // OAuth redirects to /student|mentor|recruiter?token=... before any dashboard
-  // mounts. ProtectedRoute would redirect to /login unless we persist the token
-  // here (same tick as first /auth/me), not inside a nested useEffect.
   const initializeAuth = useCallback(async () => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -97,18 +99,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       const token = localStorage.getItem("accessToken");
       if (!token) {
-        setState({ user: null, isAuthenticated: false, isLoading: false });
+        setState({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+          needsRoleSelection: false,
+        });
         return;
       }
 
       const response = await getCurrentUser();
+      const user = response.data.user;
+
+      // ── CHECK: Does user need role selection? ──
+      const needsRole = user.role === null;
+
       setState({
-        user: response.data.user,
+        user,
         isAuthenticated: true,
         isLoading: false,
+        needsRoleSelection: needsRole,
       });
 
-      if (oauthJustCompleted) {
+      if (oauthJustCompleted && !needsRole) {
         toast({
           title: oauthIsNewUser ? "Welcome! 🎉" : "Welcome back! 👋",
           description: oauthIsNewUser
@@ -118,7 +131,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch {
       localStorage.removeItem("accessToken");
-      setState({ user: null, isAuthenticated: false, isLoading: false });
+      setState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        needsRoleSelection: false,
+      });
     }
   }, [toast]);
 
@@ -129,30 +147,38 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   // ── Register ────────────────────────────────────────
   const register = async (payload: RegisterPayload): Promise<void> => {
     const response = await registerUser(payload);
-
-    // Store access token
     localStorage.setItem("accessToken", response.data.accessToken);
-
-    // Update state
     setState({
       user: response.data.user,
       isAuthenticated: true,
       isLoading: false,
+      needsRoleSelection: false,
     });
   };
 
   // ── Login ───────────────────────────────────────────
   const login = async (payload: LoginPayload): Promise<void> => {
     const response = await loginUser(payload);
-
-    // Store access token
     localStorage.setItem("accessToken", response.data.accessToken);
 
-    // Update state
+    const user = response.data.user;
+    setState({
+      user,
+      isAuthenticated: true,
+      isLoading: false,
+      needsRoleSelection: user.role === null,
+    });
+  };
+
+  // ── Select Role (NEW) ──────────────────────────────
+  const selectRole = async (role: UserRole): Promise<void> => {
+    const response = await selectUserRole(role);
+    localStorage.setItem("accessToken", response.data.accessToken);
     setState({
       user: response.data.user,
       isAuthenticated: true,
       isLoading: false,
+      needsRoleSelection: false,
     });
   };
 
@@ -164,7 +190,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Even if API fails, clear local state
     } finally {
       localStorage.removeItem("accessToken");
-      setState({ user: null, isAuthenticated: false, isLoading: false });
+      setState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        needsRoleSelection: false,
+      });
     }
   };
 
@@ -176,7 +207,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Even if API fails, clear local state
     } finally {
       localStorage.removeItem("accessToken");
-      setState({ user: null, isAuthenticated: false, isLoading: false });
+      setState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        needsRoleSelection: false,
+      });
     }
   };
 
@@ -184,13 +220,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const refreshUser = async (): Promise<void> => {
     try {
       const response = await getCurrentUser();
+      const user = response.data.user;
       setState({
-        user: response.data.user,
+        user,
         isAuthenticated: true,
         isLoading: false,
+        needsRoleSelection: user.role === null,
       });
     } catch {
-      setState({ user: null, isAuthenticated: false, isLoading: false });
+      setState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        needsRoleSelection: false,
+      });
     }
   };
 
@@ -203,6 +246,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         logout,
         logoutAll,
         refreshUser,
+        selectRole,
       }}
     >
       {children}

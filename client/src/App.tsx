@@ -20,6 +20,7 @@ import PublicMentorProfile from "@/pages/mentor/PublicMentorProfile";
 // ── Auth Pages ───────────────────────────────────────
 import Login from "@/pages/auth/Login";
 import Register from "@/pages/auth/Register";
+import SelectRole from "@/pages/auth/SelectRole";
 
 // ── Dashboard Pages ──────────────────────────────────
 import StudentDashboard from "@/pages/students/StudentDashboard";
@@ -59,6 +60,7 @@ const App = () => (
             {/* ── Auth ─── */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/select-role" element={<SelectRole />} />
             {/* ── Protected Dashboards ── */}
             <Route
               path="/student/*"

@@ -8,7 +8,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, user, needsRoleSelection } = useAuth();
   const location = useLocation();
 
   // Show loading while checking auth
@@ -25,9 +25,13 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // ── NEW: User needs to select a role first ──
+  if (needsRoleSelection || user.role === null) {
+    return <Navigate to="/select-role" replace />;
+  }
+
   // Role check
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // Redirect to their own dashboard
     const roleRedirect: Record<UserRole, string> = {
       student: "/student",
       mentor: "/mentor",

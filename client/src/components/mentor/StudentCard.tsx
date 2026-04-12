@@ -1,12 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import type { Student } from "@/types/mentor.types";
+import { useNavigate } from "react-router-dom";
 
 interface StudentCardProps {
-  student: Student;
+  student: {
+    id: string;
+    name: string;
+    skill: string;
+    progress: number;
+  };
 }
 
 const StudentCard = ({ student }: StudentCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="glass-card rounded-lg p-5">
       <h3 className="font-semibold text-foreground">{student.name}</h3>
@@ -26,7 +33,11 @@ const StudentCard = ({ student }: StudentCardProps) => {
         <Progress value={student.progress} className="h-2" />
       </div>
 
-      <Button variant="outline" className="w-full mt-4">
+      <Button
+        variant="outline"
+        className="w-full mt-4"
+        onClick={() => navigate(`/students/${student.id}`)}
+      >
         View Profile
       </Button>
     </div>

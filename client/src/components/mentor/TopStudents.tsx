@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const topStudents = [
   { name: "Aarav Sharma", score: "92%" },
@@ -7,6 +8,8 @@ const topStudents = [
 ];
 
 const TopStudents = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="glass-card rounded-lg p-5">
       <h3 className="font-semibold text-foreground mb-4">
@@ -22,7 +25,11 @@ const TopStudents = () => {
         ))}
       </div>
 
-      <Button variant="outline" className="w-full mt-4">
+      <Button
+        variant="outline"
+        className="w-full mt-4"
+        onClick={() => navigate("/mentor/students")}
+      >
         View Students
       </Button>
     </div>

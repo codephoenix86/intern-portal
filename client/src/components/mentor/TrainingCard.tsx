@@ -4,9 +4,11 @@ import type { Training } from "@/types/mentor.types";
 
 interface TrainingCardProps {
   training: Training;
+  onView?: (training: Training) => void;
+  onEdit?: (training: Training) => void;
 }
 
-const TrainingCard = ({ training }: TrainingCardProps) => {
+const TrainingCard = ({ training, onView, onEdit }: TrainingCardProps) => {
   return (
     <div className="glass-card rounded-lg p-5 hover-lift">
       <h3 className="font-semibold text-foreground">{training.title}</h3>
@@ -28,10 +30,17 @@ const TrainingCard = ({ training }: TrainingCardProps) => {
       </div>
 
       <div className="flex gap-2 mt-4">
-        <Button variant="outline" className="flex-1">
+        <Button
+          variant="outline"
+          className="flex-1"
+          onClick={() => onView?.(training)}
+        >
           View
         </Button>
-        <Button className="flex-1 gradient-primary text-primary-foreground border-0">
+        <Button
+          className="flex-1 gradient-primary text-primary-foreground border-0"
+          onClick={() => onEdit?.(training)}
+        >
           Edit
         </Button>
       </div>

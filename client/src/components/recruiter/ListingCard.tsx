@@ -6,6 +6,7 @@ interface ListingCardProps {
   applicants: number;
   postedDate: string;
   isActive?: boolean;
+  onEdit?: (id: string) => void;
   onClose?: (id: string) => void | Promise<void>;
   isClosing?: boolean;
 }
@@ -16,6 +17,7 @@ const ListingCard = ({
   applicants,
   postedDate,
   isActive = true,
+  onEdit,
   onClose,
   isClosing = false,
 }: ListingCardProps) => {
@@ -29,7 +31,7 @@ const ListingCard = ({
       </div>
 
       <div className="flex gap-2">
-        <Button size="sm" variant="outline">
+        <Button size="sm" variant="outline" onClick={() => onEdit?.(id)}>
           Edit
         </Button>
         <Button

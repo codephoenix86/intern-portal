@@ -2,8 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import {
   recruiterPortalService,
@@ -23,9 +23,21 @@ const splitCsv = (value: string): string[] =>
     .map((x) => x.trim())
     .filter(Boolean);
 
+const normalizeType = (
+  value: string,
+): CreateRecruiterJobPayload["type"] | "" => {
+  if (value === "Remote" || value === "remote") return "remote";
+  if (value === "On-site" || value === "onsite") return "onsite";
+  if (value === "Hybrid" || value === "hybrid") return "hybrid";
+  return "";
+};
+
 const PostInternshipForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editingJobId = searchParams.get("edit");
+  const isEditMode = Boolean(editingJobId);
 
   const [form, setForm] = useState<{
     title: string;
@@ -50,12 +62,59 @@ const PostInternshipForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingJob, setIsLoadingJob] = useState(false);
 
-  const publish = async (): Promise<void> => {
+  useEffect(() => {
+    const loadExistingJob = async (): Promise<void> => {
+      if (!editingJobId) return;
+
+      try {
+        setIsLoadingJob(true);
+        const job = await recruiterPortalService.getJob(editingJobId);
+        setForm({
+          title: job.title ?? "",
+          company: job.company ?? "",
+          location: job.location ?? "",
+          type: normalizeType(job.type),
+          duration: job.duration ?? "",
+          stipend: job.stipend ?? "",
+          skills: Array.isArray(job.skills) ? job.skills.join(", ") : "",
+          description: job.description ?? "",
+          requirements: Array.isArray(job.requirements)
+            ? job.requirements.join(", ")
+            : "",
+        });
+      } catch (e) {
+        console.error("Failed to load listing for edit:", e);
+        toast({
+          title: "Could not load listing",
+          description: "Please try again.",
+          variant: "destructive",
+        });
+        navigate("/recruiter/listings");
+      } finally {
+        setIsLoadingJob(false);
+      }
+    };
+
+    void loadExistingJob();
+  }, [editingJobId, navigate, toast]);
+
+  const submitListing = async (): Promise<void> => {
     if (!form.type) {
       toast({
         title: "Select internship type",
         description: "Please choose Remote, On-site, or Hybrid.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const parsedSkills = splitCsv(form.skills);
+    if (parsedSkills.length === 0) {
+      toast({
+        title: "Add at least one skill",
+        description: "Skills are required to publish or update a listing.",
         variant: "destructive",
       });
       return;
@@ -68,7 +127,7 @@ const PostInternshipForm = () => {
       type: form.type,
       duration: form.duration.trim(),
       stipend: form.stipend.trim(),
-      skills: form.skills,
+      skills: parsedSkills,
       description: form.description.trim(),
       requirements: form.requirements
         ? splitCsv(form.requirements)
@@ -77,13 +136,18 @@ const PostInternshipForm = () => {
 
     try {
       setIsSubmitting(true);
-      await recruiterPortalService.createJob(payload);
-      toast({ title: "Internship published" });
+      if (editingJobId) {
+        await recruiterPortalService.updateJob(editingJobId, payload);
+        toast({ title: "Listing updated" });
+      } else {
+        await recruiterPortalService.createJob(payload);
+        toast({ title: "Internship published" });
+      }
       navigate("/recruiter/listings");
     } catch (e) {
-      console.error("Failed to publish internship:", e);
+      console.error("Failed to submit internship listing:", e);
       toast({
-        title: "Publish failed",
+        title: isEditMode ? "Update failed" : "Publish failed",
         description: "Please check your inputs and try again.",
         variant: "destructive",
       });
@@ -97,10 +161,16 @@ const PostInternshipForm = () => {
       className="glass-card rounded-lg p-6 space-y-4"
       onSubmit={(e) => {
         e.preventDefault();
-        void publish();
+        void submitListing();
       }}
     >
-      <h3 className="font-semibold text-foreground">Post New Internship</h3>
+      <h3 className="font-semibold text-foreground">
+        {isEditMode ? "Edit Internship Listing" : "Post New Internship"}
+      </h3>
+
+      {isLoadingJob ? (
+        <p className="text-sm text-muted-foreground">Loading listing details...</p>
+      ) : null}
 
       {/* Grid Fields */}
       <div className="grid sm:grid-cols-2 gap-4">
@@ -224,9 +294,15 @@ const PostInternshipForm = () => {
       <Button
         type="submit"
         className="gradient-primary text-primary-foreground border-0"
-        disabled={isSubmitting}
+        disabled={isSubmitting || isLoadingJob}
       >
-        {isSubmitting ? "Publishing..." : "Publish Internship"}
+        {isSubmitting
+          ? isEditMode
+            ? "Saving..."
+            : "Publishing..."
+          : isEditMode
+            ? "Save Changes"
+            : "Publish Internship"}
       </Button>
     </form>
   );

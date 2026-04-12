@@ -1,14 +1,43 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import InternshipCard from "@/components/InternshipCard";
+import EmptyState from "@/components/EmptyState";
+import { InternshipCardSkeleton } from "@/components/ListingSkeletons";
 import { combinedInternshipsService, type CombinedInternship } from "@/services/combinedInternships.service";
-import { Loader2, SlidersHorizontal } from "lucide-react";
+import { studentCoursesService } from "@/services/studentCourses.service";
+import { useAuth } from "@/contexts/AuthContext";
+import { enrolledSkillsFromRows, jobHasEnrolledSkillOverlap } from "@/lib/skill-overlap";
+import { Binoculars } from "lucide-react";
 
 const SearchInternships = () => {
+  const { user } = useAuth();
   const [keyword, setKeyword] = useState("");
   const [internships, setInternships] = useState<CombinedInternship[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [enrolledSkillSet, setEnrolledSkillSet] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    if (user?.role !== "student") {
+      setEnrolledSkillSet(new Set());
+      return;
+    }
+    let cancelled = false;
+    const run = async (): Promise<void> => {
+      try {
+        const rows = await studentCoursesService.listMyEnrollments();
+        if (!cancelled) {
+          setEnrolledSkillSet(enrolledSkillsFromRows(rows.map((r) => r.skills)));
+        }
+      } catch {
+        if (!cancelled) setEnrolledSkillSet(new Set());
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.role]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -38,39 +67,49 @@ const SearchInternships = () => {
   }, [keyword]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Input
         placeholder="Search by title, company, or skill..."
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
-        className="max-w-lg"
+        className="max-w-lg h-11"
       />
 
-      {isLoading && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Searching live internships...</span>
-        </div>
-      )}
-
-      {errorMessage && (
-        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+      {errorMessage ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
           {errorMessage}
         </div>
+      ) : null}
+
+      {isLoading ? (
+        <div className="grid gap-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <InternshipCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {internships.map((i) => (
+            <InternshipCard
+              key={i.id}
+              {...i}
+              hasRelatedCourseCoverage={
+                user?.role === "student" &&
+                jobHasEnrolledSkillOverlap(i.skills, enrolledSkillSet)
+              }
+            />
+          ))}
+        </div>
       )}
 
-      <div className="grid gap-4">
-        {!isLoading && internships.map((i) => (
-          <InternshipCard key={i.id} {...i} />
-        ))}
-
-        {!isLoading && internships.length === 0 && !errorMessage && (
-          <div className="text-center py-10 text-muted-foreground">
-            <SlidersHorizontal className="h-8 w-8 mx-auto mb-2 opacity-50" />
-            <p>No internships found for this search.</p>
-          </div>
-        )}
-      </div>
+      {!isLoading && internships.length === 0 && !errorMessage ? (
+        <EmptyState
+          icon={Binoculars}
+          title="No internships match"
+          description="Try a broader keyword or browse the public listings to explore more roles."
+          action={{ label: "Browse all internships", to: "/internships" }}
+        />
+      ) : null}
     </div>
   );
 };

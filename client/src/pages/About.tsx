@@ -1,18 +1,21 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
+import { APP_DISPLAY_NAME } from "@/constants/brand";
 import { Button } from "@/components/ui/button";
 import {
-  Brain,
-  Target,
-  Users,
-  Award,
-  Rocket,
+  ScanLine,
+  Compass,
+  UsersRound,
+  BadgeCheck,
+  Telescope,
   Heart,
   Globe,
   Shield,
-  GraduationCap,
-  Briefcase,
-  BookOpen,
+  Backpack,
+  BriefcaseBusiness,
+  LampDesk,
+  ScrollText,
+  Footprints,
   ArrowRight,
   Github,
   Linkedin,
@@ -57,7 +60,7 @@ const stats: StatItem[] = [
 
 const values: ValueItem[] = [
   {
-    icon: <Brain className="h-6 w-6" />,
+    icon: <ScanLine className="h-6 w-6 stroke-[1.55]" />,
     title: "AI-First Approach",
     desc: "We leverage cutting-edge AI to match students with the right opportunities, eliminating guesswork from the hiring process.",
   },
@@ -77,12 +80,12 @@ const values: ValueItem[] = [
     desc: "We welcome students from all backgrounds, institutions, and disciplines to find opportunities.",
   },
   {
-    icon: <Rocket className="h-6 w-6" />,
+    icon: <Telescope className="h-6 w-6 stroke-[1.55]" />,
     title: "Continuous Growth",
     desc: "We constantly evolve our platform based on real feedback from our community.",
   },
   {
-    icon: <Award className="h-6 w-6" />,
+    icon: <BadgeCheck className="h-6 w-6 stroke-[1.55]" />,
     title: "Quality First",
     desc: "We rigorously verify all job postings and mentor credentials to maintain platform integrity.",
   },
@@ -122,7 +125,7 @@ const team: TeamMember[] = [
 
 const roleFeatures: RoleFeature[] = [
   {
-    icon: <GraduationCap className="h-6 w-6" />,
+    icon: <Backpack className="h-6 w-6 stroke-[1.55]" />,
     role: "For Students",
     color: "from-blue-500 to-blue-600",
     features: [
@@ -135,7 +138,7 @@ const roleFeatures: RoleFeature[] = [
     ],
   },
   {
-    icon: <Briefcase className="h-6 w-6" />,
+    icon: <BriefcaseBusiness className="h-6 w-6 stroke-[1.55]" />,
     role: "For Recruiters",
     color: "from-purple-500 to-purple-600",
     features: [
@@ -148,7 +151,7 @@ const roleFeatures: RoleFeature[] = [
     ],
   },
   {
-    icon: <BookOpen className="h-6 w-6" />,
+    icon: <LampDesk className="h-6 w-6 stroke-[1.55]" />,
     role: "For Mentors",
     color: "from-emerald-500 to-emerald-600",
     features: [
@@ -169,17 +172,18 @@ const HeroSection = () => (
     <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10" />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-          🚀 Our Story
+        <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+          <ScrollText className="h-4 w-4 stroke-[1.65]" />
+          Our story
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-6 leading-tight">
           Building the Future of
           <span className="gradient-text"> Internship Discovery</span>
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed">
-          InternPortal was founded with a single mission — to eliminate the gap
-          between talented students and great opportunities using the power of
-          Artificial Intelligence.
+          {APP_DISPLAY_NAME} was founded with a single mission — to eliminate the
+          gap between talented students and great opportunities using the power
+          of Artificial Intelligence.
         </p>
       </div>
     </div>
@@ -209,9 +213,9 @@ const MissionSection = () => (
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         {/* Left — Text */}
         <div className="space-y-6">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium">
-            <Target className="h-4 w-4" />
-            Our Mission
+          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+            <Compass className="h-4 w-4 stroke-[1.65]" />
+            Our mission
           </div>
           <h2 className="text-3xl font-bold text-foreground">
             Democratizing Access to Career Opportunities
@@ -222,14 +226,14 @@ const MissionSection = () => (
             Traditional hiring is broken — it's slow, biased, and inefficient.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            InternPortal uses AI to level the playing field. Our intelligent
-            matching engine analyzes skills, education, and experience to
-            connect students with opportunities that truly fit — not just
-            keyword matches.
+            {APP_DISPLAY_NAME} uses AI to level the playing field. Our
+            intelligent matching engine analyzes skills, education, and
+            experience to connect students with opportunities that truly fit —
+            not just keyword matches.
           </p>
           <Link to="/register">
             <Button className="gradient-primary text-primary-foreground border-0 gap-2">
-              Join InternPortal
+              Join {APP_DISPLAY_NAME}
               <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
@@ -239,20 +243,20 @@ const MissionSection = () => (
         <div className="grid grid-cols-2 gap-4">
           {[
             {
-              icon: <Brain className="h-8 w-8 text-primary" />,
-              label: "AI Matching",
+              icon: <ScanLine className="h-8 w-8 stroke-[1.45] text-primary" />,
+              label: "AI matching",
             },
             {
-              icon: <Users className="h-8 w-8 text-purple-500" />,
-              label: "50K+ Community",
+              icon: <UsersRound className="h-8 w-8 stroke-[1.45] text-purple-500" />,
+              label: "50K+ community",
             },
             {
-              icon: <Rocket className="h-8 w-8 text-emerald-500" />,
-              label: "Fast Placement",
+              icon: <Footprints className="h-8 w-8 stroke-[1.45] text-emerald-500" />,
+              label: "Faster placement",
             },
             {
-              icon: <Award className="h-8 w-8 text-orange-500" />,
-              label: "Verified Certs",
+              icon: <BadgeCheck className="h-8 w-8 stroke-[1.45] text-orange-500" />,
+              label: "Verified certs",
             },
           ].map((item, i) => (
             <div
@@ -311,8 +315,8 @@ const RoleFeaturesSection = () => (
           Built for Everyone
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          Whether you're a student, recruiter, or mentor — InternPortal has
-          powerful tools built specifically for you.
+          Whether you're a student, recruiter, or mentor — {APP_DISPLAY_NAME}{" "}
+          has powerful tools built specifically for you.
         </p>
       </div>
 
@@ -438,8 +442,8 @@ const CTASection = () => (
           Ready to Start Your Journey?
         </h2>
         <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-          Join thousands of students, recruiters, and mentors already using
-          InternPortal to build better careers.
+          Join thousands of students, recruiters, and mentors already using{" "}
+          {APP_DISPLAY_NAME} to build better careers.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

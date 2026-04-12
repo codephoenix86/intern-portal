@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { AxiosError } from "axios";
 import { useParams, Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import SkillTag from "@/components/SkillTag";
@@ -11,9 +12,24 @@ import type { InternshipJob } from "@/services/jobService";
 import { combinedInternshipsService } from "@/services/combinedInternships.service";
 import { studentPortalService } from "@/services/studentPortal.service";
 import { getMatch, getSuggestions, type MatchData, type SuggestionsData } from "@/services/matchService";
+import { studentCoursesService } from "@/services/studentCourses.service";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, Clock, Users, Building2, ArrowLeft, CheckCircle, Loader2, ExternalLink, BookOpen } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { jobHasEnrolledSkillOverlap, enrolledSkillsFromRows } from "@/lib/skill-overlap";
+import {
+  MapPin,
+  Clock,
+  Users,
+  Building2,
+  ArrowLeft,
+  CheckCircle,
+  Loader2,
+  ExternalLink,
+  BookOpen,
+  Crosshair,
+  Target,
+} from "lucide-react";
 
 type InternshipDetailRecord = InternshipJob & {
   description?: string;
@@ -40,8 +56,31 @@ const InternshipDetail = () => {
   const [matchData, setMatchData] = useState<MatchData | null>(null);
   const [suggestions, setSuggestions] = useState<SuggestionsData | null>(null);
   const [isLoadingMatch, setIsLoadingMatch] = useState(false);
+  const [enrolledSkillSet, setEnrolledSkillSet] = useState<Set<string>>(() => new Set());
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (user?.role !== "student") {
+      setEnrolledSkillSet(new Set());
+      return;
+    }
+    let cancelled = false;
+    const run = async (): Promise<void> => {
+      try {
+        const rows = await studentCoursesService.listMyEnrollments();
+        if (!cancelled) {
+          setEnrolledSkillSet(enrolledSkillsFromRows(rows.map((r) => r.skills)));
+        }
+      } catch {
+        if (!cancelled) setEnrolledSkillSet(new Set());
+      }
+    };
+    void run();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.role]);
 
   useEffect(() => {
     const loadDetail = async (): Promise<void> => {
@@ -108,7 +147,7 @@ const InternshipDetail = () => {
     };
 
     void loadDetail();
-  }, [id, state?.internship]);
+  }, [id, state?.internship, user?._id, user?.role]);
 
   const applyOnPlatform = async (): Promise<void> => {
     if (!id) {
@@ -128,9 +167,10 @@ const InternshipDetail = () => {
         title: "Application submitted",
         description: "Your application has been sent to the recruiter.",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const axiosError = error as AxiosError<{ message?: string }>;
       const message =
-        error?.response?.data?.message ??
+        axiosError.response?.data?.message ??
         "Could not apply right now. Please try again.";
       toast({
         title: "Apply failed",
@@ -240,53 +280,114 @@ const InternshipDetail = () => {
             ))}
           </ul>
 
-          {user?.role === "student" && matchData && (
-            <>
-              <h3 className="font-semibold text-foreground mb-2">Match Score</h3>
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">Your match with this internship</span>
-                  <span className="text-sm font-medium">{Math.round(matchData.score)}%</span>
-                </div>
-                <Progress value={matchData.score} className="h-2" />
+          {user?.role === "student" && isLoadingMatch && (
+            <div className="mb-6 rounded-xl border border-border bg-muted/30 p-6">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Loading your fit score…
               </div>
+            </div>
+          )}
 
-              {matchData.missingSkills.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-foreground mb-2">Missing Skills</h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {matchData.missingSkills.map(skill => (
-                      <SkillTag key={skill} skill={skill} />
-                    ))}
+          {user?.role === "student" && !isLoadingMatch && matchData && (
+            <Card className="mb-6 border-primary/20 bg-gradient-to-br from-primary/[0.06] to-transparent shadow-card">
+              <CardHeader className="pb-2">
+                <CardTitle className="font-display flex items-center gap-2 text-lg">
+                  <Crosshair className="h-5 w-5 stroke-[1.55] text-primary" />
+                  Your fit
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  How your skills align with this role — and what to learn next.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Target className="h-4 w-4" />
+                      Match score
+                    </span>
+                    <span className="font-semibold text-foreground">{Math.round(matchData.score)}%</span>
+                  </div>
+                  <Progress value={matchData.score} className="h-2.5" />
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-accent">
+                      Strong matches
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {matchData.matchedSkills.length > 0 ? (
+                        matchData.matchedSkills.map((skill) => (
+                          <span
+                            key={skill}
+                            className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-foreground"
+                          >
+                            <CheckCircle className="h-3 w-3 text-accent" />
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <p className="text-sm text-muted-foreground">No direct overlaps yet — courses below can help.</p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-chart-4">
+                      Close the gap
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {matchData.missingSkills.length > 0 ? (
+                        matchData.missingSkills.map((skill) => <SkillTag key={skill} skill={skill} />)
+                      ) : (
+                        <p className="text-sm text-muted-foreground">You cover the listed skill tags.</p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              )}
 
-              {suggestions?.recommendedCourses.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="font-semibold text-foreground mb-2">Suggested Courses</h3>
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {suggestions.recommendedCourses.map(course => (
-                      <Card key={course._id} className="hover:shadow-md transition-shadow">
-                        <CardHeader className="pb-2">
-                          <CardTitle className="text-sm flex items-center gap-2">
-                            <BookOpen className="h-4 w-4" />
-                            {course.name}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className="pt-0">
-                          <Button variant="outline" size="sm" asChild>
-                            <a href={`/courses/${course.link}`} target="_blank" rel="noreferrer" className="flex items-center gap-1">
-                              View Course <ExternalLink className="h-3 w-3" />
-                            </a>
-                          </Button>
-                        </CardContent>
-                      </Card>
-                    ))}
+                {jobHasEnrolledSkillOverlap(internship.skills, enrolledSkillSet) && (
+                  <div className="flex items-center gap-2 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-sm text-foreground">
+                    <CheckCircle className="h-4 w-4 shrink-0 text-accent" />
+                    You have enrolled courses that cover related skills for this role.
                   </div>
-                </div>
-              )}
-            </>
+                )}
+
+                {suggestions && suggestions.recommendedCourses.length > 0 && (
+                  <>
+                    <Separator />
+                    <div>
+                      <p className="mb-3 font-medium text-foreground">Recommended next courses</p>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {suggestions.recommendedCourses.map((course) => (
+                          <Card key={course._id} className="border-border/80 shadow-sm transition-shadow hover:shadow-md">
+                            <CardHeader className="pb-2">
+                              <CardTitle className="flex items-center gap-2 text-sm font-semibold">
+                                <BookOpen className="h-4 w-4 text-primary" />
+                                {course.name}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="pt-0">
+                              <Button variant="outline" size="sm" asChild>
+                                <a
+                                  href={`/courses/${course.link}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex items-center gap-1"
+                                >
+                                  View course <ExternalLink className="h-3 w-3" />
+                                </a>
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
           )}
 
           {internship.applyUrl ? (
@@ -311,7 +412,16 @@ const InternshipDetail = () => {
           <div>
             <h2 className="text-lg font-semibold text-foreground mb-4">Similar Internships</h2>
             <div className="grid gap-4">
-              {similar.map(i => <InternshipCard key={i.id} {...i} />)}
+              {similar.map((i) => (
+                <InternshipCard
+                  key={i.id}
+                  {...i}
+                  hasRelatedCourseCoverage={
+                    user?.role === "student" &&
+                    jobHasEnrolledSkillOverlap(i.skills, enrolledSkillSet)
+                  }
+                />
+              ))}
             </div>
           </div>
         )}

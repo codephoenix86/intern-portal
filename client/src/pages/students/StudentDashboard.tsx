@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
-import { STUDENT_SIDEBAR_ITEMS } from "@/constants/student.sidebar";
+import { STUDENT_SIDEBAR_SECTIONS } from "@/constants/student.sidebar";
 
 import DashboardHome from "./DashboardHome";
 import SearchInternships from "./SearchInternships";
@@ -26,7 +26,7 @@ const StudentDashboard = () => {
         path="/"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Dashboard"
           >
@@ -39,7 +39,7 @@ const StudentDashboard = () => {
         path="/search"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Search Internships"
           >
@@ -52,7 +52,7 @@ const StudentDashboard = () => {
         path="/recommended"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Recommended"
           >
@@ -65,7 +65,7 @@ const StudentDashboard = () => {
         path="/sessions"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Live Sessions"
           >
@@ -78,7 +78,7 @@ const StudentDashboard = () => {
         path="/resume"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Resume"
           >
@@ -91,7 +91,7 @@ const StudentDashboard = () => {
         path="/skills"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Skill Evaluation"
           >
@@ -104,7 +104,7 @@ const StudentDashboard = () => {
         path="/roadmap"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Skill Roadmap"
           >
@@ -117,7 +117,7 @@ const StudentDashboard = () => {
         path="/applications"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Applications"
           >
@@ -130,7 +130,7 @@ const StudentDashboard = () => {
         path="/courses"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Courses"
           >
@@ -143,7 +143,7 @@ const StudentDashboard = () => {
         path="/courses/:courseId"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Course"
           >
@@ -156,7 +156,7 @@ const StudentDashboard = () => {
         path="/enrollments"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="My courses"
           >
@@ -170,7 +170,7 @@ const StudentDashboard = () => {
         path="/people/students"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Students"
           >
@@ -183,7 +183,7 @@ const StudentDashboard = () => {
         path="/people/recruiters"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Recruiters"
           >
@@ -196,7 +196,7 @@ const StudentDashboard = () => {
         path="/people/mentors"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Mentors"
           >
@@ -209,7 +209,7 @@ const StudentDashboard = () => {
         path="/settings"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Settings"
           >
@@ -222,7 +222,7 @@ const StudentDashboard = () => {
         path="/profile"
         element={
           <DashboardLayout
-            sidebarItems={STUDENT_SIDEBAR_ITEMS}
+            sections={STUDENT_SIDEBAR_SECTIONS}
             role="student"
             title="Profile"
           >

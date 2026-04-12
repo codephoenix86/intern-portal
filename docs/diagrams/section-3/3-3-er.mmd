@@ -1,0 +1,43 @@
+erDiagram
+    User {
+        objectId id PK
+        string name
+        string email
+        string role
+        string studentSkills
+    }
+    Job {
+        objectId id PK
+        string title
+        string company
+        string description
+        string skills
+        objectId recruiterId FK
+    }
+    Application {
+        objectId id PK
+        objectId studentId FK
+        objectId jobId FK
+        string status
+        float matchScore
+    }
+    Course {
+        objectId id PK
+        string title
+        string description
+        string skills
+        objectId mentorId FK
+    }
+    Enrollment {
+        objectId id PK
+        objectId studentId FK
+        objectId courseId FK
+        string status
+        float progress
+    }
+    User ||--o{ Application : submits as student
+    Job ||--o{ Application : receives for job
+    User ||--o{ Job : posts as recruiter
+    User ||--o{ Course : creates as mentor
+    User ||--o{ Enrollment : enrolls as student
+    Course ||--o{ Enrollment : has enrollments

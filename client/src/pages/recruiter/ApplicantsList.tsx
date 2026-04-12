@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import ApplicantCard from "@/components/recruiter/ApplicantCard";
 import ApplicantStatusFilterBar from "@/components/recruiter/ApplicantStatusFilter";
+import { ApplicantCardSkeleton } from "@/components/ListingSkeletons";
+import EmptyState from "@/components/EmptyState";
 import type { ApplicantStatusFilter } from "@/constants/recruiter.constants";
 import { applicationService, type RecruiterApplicantItem } from "@/services/applicationService";
+import { UserSearch } from "lucide-react";
 
 const ApplicantsList = () => {
   const [statusFilter, setStatusFilter] =
@@ -31,29 +34,42 @@ const ApplicantsList = () => {
   }, [statusFilter]);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <ApplicantStatusFilterBar
         active={statusFilter}
         onChange={setStatusFilter}
       />
 
-      <div className="space-y-3">
-        {isLoading && (
-          <p className="text-sm text-muted-foreground">Loading applicants...</p>
-        )}
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <ApplicantCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : null}
 
-        {errorMessage && (
-          <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-            {errorMessage}
-          </div>
-        )}
+      {errorMessage ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm text-destructive">
+          {errorMessage}
+        </div>
+      ) : null}
 
-        {!isLoading &&
-          !errorMessage &&
-          items.map((a) => (
+      {!isLoading && !errorMessage ? (
+        <div className="space-y-4">
+          {items.map((a) => (
             <ApplicantCard key={a.applicationId} applicant={a} />
           ))}
-      </div>
+        </div>
+      ) : null}
+
+      {!isLoading && !errorMessage && items.length === 0 ? (
+        <EmptyState
+          icon={UserSearch}
+          title="No applicants in this view"
+          description="Try another filter or share your listings to start receiving applications."
+          action={{ label: "My listings", to: "/recruiter/listings" }}
+        />
+      ) : null}
     </div>
   );
 };

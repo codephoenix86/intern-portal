@@ -3,7 +3,9 @@ import InternshipCard from "@/components/InternshipCard";
 import { Loader2 } from "lucide-react";
 import type { InternshipJob } from "@/services/jobService";
 import { studentProfileService } from "@/services/studentProfile.service";
+import { studentCoursesService } from "@/services/studentCourses.service";
 import { combinedInternshipsService } from "@/services/combinedInternships.service";
+import { enrolledSkillsFromRows, jobHasEnrolledSkillOverlap } from "@/lib/skill-overlap";
 
 const normalize = (value: string): string => value.trim().toLowerCase();
 
@@ -27,14 +29,18 @@ const RecommendedInternships = () => {
   const [recommended, setRecommended] = useState<InternshipJob[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [enrolledSkillSet, setEnrolledSkillSet] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     const loadRecommended = async (): Promise<void> => {
       try {
-        const [profile, combined] = await Promise.all([
+        const [profile, combined, enrollRows] = await Promise.all([
           studentProfileService.getProfile(),
           combinedInternshipsService.list({ limit: 200 }),
+          studentCoursesService.listMyEnrollments().catch(() => []),
         ]);
+
+        setEnrolledSkillSet(enrolledSkillsFromRows(enrollRows.map((r) => r.skills)));
 
         const profileSkills = profile.studentSkills.map(normalize).filter(Boolean);
 
@@ -79,9 +85,14 @@ const RecommendedInternships = () => {
       )}
 
       <div className="grid gap-4">
-        {!isLoading && recommended.map((i) => (
-          <InternshipCard key={i.id} {...i} />
-        ))}
+        {!isLoading &&
+          recommended.map((i) => (
+            <InternshipCard
+              key={i.id}
+              {...i}
+              hasRelatedCourseCoverage={jobHasEnrolledSkillOverlap(i.skills, enrolledSkillSet)}
+            />
+          ))}
 
         {!isLoading && !errorMessage && recommended.length === 0 && (
           <p className="text-sm text-muted-foreground">

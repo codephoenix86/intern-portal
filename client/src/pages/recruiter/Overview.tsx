@@ -1,4 +1,4 @@
-import { List, Users, FileText, Bell } from "lucide-react";
+import { LayoutList, UserSearch, ClipboardCheck, CalendarClock } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import StatsCard from "@/components/StatsCard";
 import ApplicantStatusChart from "@/components/recruiter/ApplicantStatusChart";
@@ -47,33 +47,37 @@ const Overview = () => {
   }, [statusBreakdown]);
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-8">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Active Listings"
           value={isLoading ? "…" : (stats?.activeListings ?? 0)}
-          icon={<List className="h-4 w-4" />}
+          icon={<LayoutList className="h-4 w-4 stroke-[1.65]" />}
         />
         <StatsCard
           title="Total Applicants"
           value={isLoading ? "…" : (stats?.totalApplicants ?? 0)}
-          icon={<Users className="h-4 w-4" />}
+          icon={<UserSearch className="h-4 w-4 stroke-[1.65]" />}
           trend="+15 this week"
         />
         <StatsCard
           title="Shortlisted"
           value={isLoading ? "…" : (stats?.shortlisted ?? 0)}
-          icon={<FileText className="h-4 w-4" />}
+          icon={<ClipboardCheck className="h-4 w-4 stroke-[1.65]" />}
         />
         <StatsCard
           title="Interviews"
           value={isLoading ? "…" : (stats?.interviewsScheduled ?? 0)}
-          icon={<Bell className="h-4 w-4" />}
+          icon={<CalendarClock className="h-4 w-4 stroke-[1.65]" />}
           trend="+3 scheduled"
         />
       </div>
 
-      <ApplicantStatusChart data={chartData} />
+      {isLoading ? (
+        <div className="h-80 animate-pulse rounded-xl border border-border bg-card" />
+      ) : (
+        <ApplicantStatusChart data={chartData} />
+      )}
     </div>
   );
 };

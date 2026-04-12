@@ -1,42 +1,71 @@
 import {
-  LayoutDashboard,
-  PlusCircle,
-  List,
-  Users,
-  Bell,
-  Settings,
+  Gauge,
+  PenLine,
+  LayoutList,
+  UserSearch,
+  Inbox,
+  Wrench,
 } from "lucide-react";
-import type { RecruiterSidebarItem } from "@/types/recruiter.types";
+import type { AppShellNavSection } from "@/types/shell.types";
+import { appIconNav } from "@/lib/app-icon-class";
 
-export const RECRUITER_SIDEBAR_ITEMS: RecruiterSidebarItem[] = [
+const ic = appIconNav;
+
+export const RECRUITER_SIDEBAR_SECTIONS: AppShellNavSection[] = [
   {
-    to: "/recruiter",
-    label: "Overview",
-    icon: <LayoutDashboard className="h-4 w-4" />,
+    label: "Workspace",
+    items: [
+      {
+        to: "/recruiter",
+        label: "Overview",
+        icon: <Gauge className={ic()} />,
+        end: true,
+      },
+    ],
   },
   {
-    to: "/recruiter/post",
-    label: "Post Internship",
-    icon: <PlusCircle className="h-4 w-4" />,
+    label: "Hiring",
+    items: [
+      {
+        to: "/recruiter/post",
+        label: "Post internship",
+        icon: <PenLine className={ic()} />,
+      },
+      {
+        to: "/recruiter/listings",
+        label: "My listings",
+        icon: <LayoutList className={ic()} />,
+      },
+      {
+        to: "/recruiter/applicants",
+        label: "Applicants",
+        icon: <UserSearch className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/recruiter/listings",
-    label: "My Listings",
-    icon: <List className="h-4 w-4" />,
+    label: "Engage",
+    items: [
+      {
+        to: "/recruiter/notifications",
+        label: "Notifications",
+        icon: <Inbox className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/recruiter/applicants",
-    label: "Applicants",
-    icon: <Users className="h-4 w-4" />,
-  },
-  {
-    to: "/recruiter/notifications",
-    label: "Notifications",
-    icon: <Bell className="h-4 w-4" />,
-  },
-  {
-    to: "/recruiter/settings",
-    label: "Settings",
-    icon: <Settings className="h-4 w-4" />,
+    label: "Account",
+    items: [
+      {
+        to: "/recruiter/settings",
+        label: "Settings",
+        icon: <Wrench className={ic()} />,
+      },
+    ],
   },
 ];
+
+/** @deprecated Use RECRUITER_SIDEBAR_SECTIONS */
+export const RECRUITER_SIDEBAR_ITEMS = RECRUITER_SIDEBAR_SECTIONS.flatMap(
+  (s) => s.items,
+);

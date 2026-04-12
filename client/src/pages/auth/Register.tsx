@@ -7,6 +7,7 @@ import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 import RegisterForm from "@/components/auth/RegisterForm";
 import { useAuth } from "@/contexts/AuthContext";
 import type { UserRole } from "@/types/auth.types";
+import { APP_DISPLAY_NAME } from "@/constants/brand";
 
 const Register = () => {
   const { isAuthenticated, user, isLoading } = useAuth();
@@ -26,7 +27,7 @@ const Register = () => {
     <div className="min-h-screen flex">
       {/* Left — Branding */}
       <AuthBrandPanel
-        title="Join InternPortal"
+        title={`Join ${APP_DISPLAY_NAME}`}
         description="Whether you're seeking an internship, hiring talent, or mentoring students, we've got you covered."
       />
 
@@ -35,7 +36,7 @@ const Register = () => {
         <div className="w-full max-w-md">
           <AuthLogo />
 
-          <h1 className="text-2xl font-bold text-foreground mb-1">
+          <h1 className="font-display text-2xl font-bold text-foreground mb-1">
             Create an account
           </h1>
           <p className="text-muted-foreground mb-6">

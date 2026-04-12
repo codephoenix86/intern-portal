@@ -1,96 +1,135 @@
 import {
-  LayoutDashboard,
-  Search,
-  Star,
-  FileText,
-  Brain,
-  TrendingUp,
-  Kanban,
-  Settings,
-  Video,
-  User,
-  Users,
-  Building2,
-  GraduationCap,
-  BookOpen,
-  Library,
+  Gauge,
+  ScanSearch,
+  Compass,
+  ListTodo,
+  ScrollText,
+  Layers2,
+  BookmarkCheck,
+  Radio,
+  MapPinned,
+  ClipboardCheck,
+  UserRound,
+  BriefcaseBusiness,
+  Presentation,
+  ContactRound,
+  Wrench,
 } from "lucide-react";
-import type { SidebarItem } from "@/types/student.types";
+import type { AppShellNavSection } from "@/types/shell.types";
+import { appIconNav } from "@/lib/app-icon-class";
 
-export const STUDENT_SIDEBAR_ITEMS: SidebarItem[] = [
+const ic = appIconNav;
+
+export const STUDENT_SIDEBAR_SECTIONS: AppShellNavSection[] = [
   {
-    to: "/student",
-    label: "Dashboard",
-    icon: <LayoutDashboard className="h-4 w-4" />,
+    label: "Discover",
+    items: [
+      {
+        to: "/student",
+        label: "Dashboard",
+        icon: <Gauge className={ic()} />,
+        end: true,
+      },
+      {
+        to: "/student/search",
+        label: "Search internships",
+        icon: <ScanSearch className={ic()} />,
+      },
+      {
+        to: "/student/recommended",
+        label: "Recommended",
+        icon: <Compass className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/student/search",
-    label: "Search Internships",
-    icon: <Search className="h-4 w-4" />,
+    label: "Apply",
+    items: [
+      {
+        to: "/student/applications",
+        label: "Applications",
+        icon: <ListTodo className={ic()} />,
+      },
+      {
+        to: "/student/resume",
+        label: "Resume",
+        icon: <ScrollText className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/student/recommended",
-    label: "Recommended",
-    icon: <Star className="h-4 w-4" />,
+    label: "Learn",
+    items: [
+      {
+        to: "/student/courses",
+        label: "Courses",
+        icon: <Layers2 className={ic()} />,
+      },
+      {
+        to: "/student/enrollments",
+        label: "My courses",
+        icon: <BookmarkCheck className={ic()} />,
+      },
+      {
+        to: "/student/sessions",
+        label: "Live sessions",
+        icon: <Radio className={ic()} />,
+      },
+      {
+        to: "/student/roadmap",
+        label: "Skill roadmap",
+        icon: <MapPinned className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/student/resume",
-    label: "Resume",
-    icon: <FileText className="h-4 w-4" />,
+    label: "Grow",
+    items: [
+      {
+        to: "/student/skills",
+        label: "Skill evaluation",
+        icon: <ClipboardCheck className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/student/skills",
-    label: "Skill Evaluation",
-    icon: <Brain className="h-4 w-4" />,
+    label: "Network",
+    items: [
+      {
+        to: "/student/people/students",
+        label: "Students",
+        icon: <UserRound className={ic()} />,
+      },
+      {
+        to: "/student/people/recruiters",
+        label: "Recruiters",
+        icon: <BriefcaseBusiness className={ic()} />,
+      },
+      {
+        to: "/student/people/mentors",
+        label: "Mentors",
+        icon: <Presentation className={ic()} />,
+      },
+    ],
   },
   {
-    to: "/student/roadmap",
-    label: "Skill Roadmap",
-    icon: <TrendingUp className="h-4 w-4" />,
-  },
-  {
-    to: "/student/applications",
-    label: "Applications",
-    icon: <Kanban className="h-4 w-4" />,
-  },
-  {
-    to: "/student/courses",
-    label: "Courses",
-    icon: <BookOpen className="h-4 w-4" />,
-  },
-  {
-    to: "/student/enrollments",
-    label: "My courses",
-    icon: <Library className="h-4 w-4" />,
-  },
-  {
-    to: "/student/people/students",
-    label: "Students",
-    icon: <Users className="h-4 w-4" />,
-  },
-  {
-    to: "/student/people/recruiters",
-    label: "Recruiters",
-    icon: <Building2 className="h-4 w-4" />,
-  },
-  {
-    to: "/student/people/mentors",
-    label: "Mentors",
-    icon: <GraduationCap className="h-4 w-4" />,
-  },
-  {
-    to: "/student/sessions",
-    label: "Live Sessions",
-    icon: <Video className="h-4 w-4" />,
-  },
-  {
-    to: "/student/profile",
-    label: "Profile",
-    icon: <User className="h-4 w-4" />,
-  },
-  {
-    to: "/student/settings",
-    label: "Settings",
-    icon: <Settings className="h-4 w-4" />,
+    label: "Account",
+    items: [
+      {
+        to: "/student/profile",
+        label: "Profile",
+        icon: <ContactRound className={ic()} />,
+      },
+      {
+        to: "/student/settings",
+        label: "Settings",
+        icon: <Wrench className={ic()} />,
+      },
+    ],
   },
 ];
+
+/** @deprecated Use STUDENT_SIDEBAR_SECTIONS — flat list for legacy imports */
+export const STUDENT_SIDEBAR_ITEMS = STUDENT_SIDEBAR_SECTIONS.flatMap(
+  (s) => s.items,
+);

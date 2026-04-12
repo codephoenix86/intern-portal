@@ -1,4 +1,4 @@
-import { Bell } from "lucide-react";
+import { BellRing } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { Notification } from "@/types/student.types";
 import { notificationsService } from "@/services/notifications.service";
@@ -46,7 +46,7 @@ const NotificationBell = () => {
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)} className="relative p-2 rounded-lg hover:bg-muted transition-colors">
-        <Bell className="h-5 w-5 text-muted-foreground" />
+        <BellRing className="h-5 w-5 stroke-[1.55] text-muted-foreground" />
         {isAuthenticated && unreadCount > 0 && (
           <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center font-bold">
             {unreadCount}

@@ -3,29 +3,34 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import {
-  Briefcase,
-  Brain,
-  BarChart3,
-  Zap,
+  FileSearch,
+  Route,
+  RadioReceiver,
   Star,
   ChevronLeft,
   ChevronRight,
+  Telescope,
+  Flame,
 } from "lucide-react";
+import { appIconLg } from "@/lib/app-icon-class";
+import { APP_DISPLAY_NAME } from "@/constants/brand";
+
+const feat = appIconLg;
 
 // --- Mock Data ---
 const features = [
   {
-    icon: <Brain className="h-6 w-6" />,
+    icon: <FileSearch className={feat()} />,
     title: "AI Resume Matching",
     desc: "Our AI analyzes your resume and matches you with the most relevant internships automatically.",
   },
   {
-    icon: <BarChart3 className="h-6 w-6" />,
+    icon: <Route className={feat()} />,
     title: "Skill Tracking",
     desc: "Evaluate your skills, track progress, and follow personalized improvement roadmaps.",
   },
   {
-    icon: <Zap className="h-6 w-6" />,
+    icon: <RadioReceiver className={feat()} />,
     title: "Real-Time Updates",
     desc: "Get instant notifications on application status changes and recruiter responses.",
   },
@@ -42,8 +47,7 @@ const testimonials = [
   {
     name: "Priya M.",
     role: "SDE Intern at Google",
-    quote:
-      "InternPortal matched me with my dream internship in just 2 weeks. The AI resume analysis was spot on!",
+    quote: `${APP_DISPLAY_NAME} matched me with my dream internship in just 2 weeks. The AI resume analysis was spot on!`,
   },
   {
     name: "Rahul K.",
@@ -189,10 +193,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6 animate-fade-up">
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium">
-                🚀 AI-Powered Career Platform
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                <Telescope className="h-4 w-4 stroke-[1.65]" />
+                AI-powered career platform
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">
+              <h1 className="font-display text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
                 Launch Your Career with
                 <span className="gradient-text">
                   {" "}
@@ -233,19 +238,18 @@ const Index = () => {
       </section>
 
       {/* --- HIRING COMPANIES STRIP (UPDATED) --- */}
-      <section className="bg-white border-y border-border/50 py-10 overflow-hidden">
+      <section className="border-y border-border/60 bg-card py-10 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-6 font-semibold mb-8">
-            <span className="text-3xl font-bold text-primary">10K+</span>
+            <span className="font-display text-3xl font-bold text-primary">10K+</span>
             <span className="text-sm text-muted-foreground uppercase tracking-wide">
               Openings Daily
             </span>
           </div>
 
           <div className="relative">
-            {/* White Fade Gradients */}
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+            <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-20 bg-gradient-to-r from-card to-transparent" />
+            <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-20 bg-gradient-to-l from-card to-transparent" />
 
             <div
               ref={companyRef}
@@ -270,8 +274,8 @@ const Index = () => {
       <section className="py-20 bg-muted/30">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-foreground mb-3">
-              Why InternPortal?
+            <h2 className="font-display text-3xl font-bold text-foreground mb-3">
+              Why {APP_DISPLAY_NAME}?
             </h2>
             <p className="text-muted-foreground max-w-xl mx-auto">
               Powered by AI to make internship discovery, application, and
@@ -321,8 +325,9 @@ const Index = () => {
       >
         <div className="max-w-7xl mx-auto px-4 relative">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-bold flex items-center gap-2">
-              Trending Now <span className="text-primary">📈</span>
+            <h2 className="flex items-center gap-2 text-3xl font-bold">
+              Trending now
+              <Flame className="h-8 w-8 stroke-[1.5] text-primary" aria-hidden />
             </h2>
 
             {/* Manual Controls */}
@@ -358,12 +363,12 @@ const Index = () => {
               {[...trendingCards, ...trendingCards].map((card, index) => (
                 <div
                   key={`${card.id}-${index}`}
-                  className={`min-w-[360px] flex-shrink-0 rounded-2xl p-6 shadow-xl hover:scale-105 transition duration-300 ${
+                  className={`min-w-[360px] flex-shrink-0 rounded-2xl p-6 shadow-xl transition duration-300 hover:scale-[1.02] ${
                     card.type === "gradient"
-                      ? "bg-gradient-to-br from-primary to-accent text-white"
+                      ? "bg-gradient-to-br from-primary to-accent text-primary-foreground"
                       : card.type === "gradient-reverse"
-                        ? "bg-gradient-to-br from-accent to-primary text-white"
-                        : "bg-white text-foreground border border-border"
+                        ? "bg-gradient-to-br from-accent to-primary text-primary-foreground"
+                        : "border border-border bg-card text-foreground shadow-card"
                   }`}
                 >
                   <h3 className="text-xl font-bold mb-2">{card.title}</h3>

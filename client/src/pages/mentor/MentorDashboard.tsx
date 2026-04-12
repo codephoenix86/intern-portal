@@ -1,7 +1,8 @@
 // client/src/pages/mentor/MentorDashboard.tsx
 
 import { Routes, Route } from "react-router-dom";
-import MentorLayout from "@/components/mentor/MentorLayout";
+import DashboardLayout from "@/components/DashboardLayout";
+import { MENTOR_SIDEBAR_SECTIONS } from "@/constants/mentor.sidebar";
 
 import MentorHome from "./MentorHome";
 import MentorTrainings from "./MentorTrainings";
@@ -22,108 +23,156 @@ const MentorDashboard = () => {
       <Route
         path="/"
         element={
-          <MentorLayout title="Dashboard">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Dashboard"
+          >
             <MentorHome />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/courses"
         element={
-          <MentorLayout title="Courses">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Courses"
+          >
             <MentorCoursesPage />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/courses/new"
         element={
-          <MentorLayout title="New course">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="New course"
+          >
             <MentorCourseNewPage />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/courses/:courseId/students"
         element={
-          <MentorLayout title="Enrolled students">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Enrolled students"
+          >
             <MentorCourseStudentsPage />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/courses/:courseId"
         element={
-          <MentorLayout title="Course">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Course"
+          >
             <MentorCourseDetailPage />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/trainings"
         element={
-          <MentorLayout title="Skill Trainings">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Skill trainings"
+          >
             <MentorTrainings />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/classes"
         element={
-          <MentorLayout title="Classes">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Classes"
+          >
             <MentorClasses />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/students"
         element={
-          <MentorLayout title="My Students">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="My students"
+          >
             <MentorStudents />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/assignments"
         element={
-          <MentorLayout title="Assignments">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Assignments"
+          >
             <MentorAssignments />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/progress"
         element={
-          <MentorLayout title="Progress Tracking">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Progress tracking"
+          >
             <MentorProgress />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/messages"
         element={
-          <MentorLayout title="Messages">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Messages"
+          >
             <MentorMessages />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
 
       <Route
         path="/settings"
         element={
-          <MentorLayout title="Settings">
+          <DashboardLayout
+            sections={MENTOR_SIDEBAR_SECTIONS}
+            role="mentor"
+            title="Settings"
+          >
             <MentorSettings />
-          </MentorLayout>
+          </DashboardLayout>
         }
       />
     </Routes>

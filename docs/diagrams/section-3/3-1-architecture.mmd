@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph clientTier [Client Tier]
+        reactApp[React SPA]
+    end
+    subgraph appTier [Application Tier]
+        expressApi[Node Express REST API]
+    end
+    subgraph dataTier [Data Tier]
+        mongoDb[(MongoDB)]
+    end
+    subgraph extServices [External Services]
+        googleOAuth[Google OAuth and UserInfo API]
+        internshalaSource[Internshala Public Pages]
+    end
+    reactApp -->|HTTPS JSON REST| expressApi
+    expressApi -->|Mongoose ODM| mongoDb
+    expressApi -->|OAuth2 token exchange profile fetch| googleOAuth
+    expressApi -->|HTTP scrape parse listings| internshalaSource

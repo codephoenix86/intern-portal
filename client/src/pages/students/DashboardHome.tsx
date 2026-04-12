@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, FileText, Search, Star, TrendingUp } from "lucide-react";
+import { ListTodo, Mic, Eye, Percent, Tag } from "lucide-react";
 import StatsCard from "@/components/StatsCard";
 import ProfileCompletion from "@/components/student/ProfileCompletion";
 import ProfileSummaryCard from "@/components/student/ProfileSummaryCard";
@@ -248,7 +248,22 @@ const DashboardHome = () => {
   };
 
   if (!profile || !stats) {
-    return <p className="text-sm text-muted-foreground">Loading dashboard...</p>;
+    return (
+      <div className="space-y-6">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-28 rounded-xl border border-border bg-card p-4 shadow-sm">
+              <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+              <div className="mt-4 h-8 w-16 animate-pulse rounded bg-muted" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="h-64 rounded-xl border border-border bg-card animate-pulse" />
+          <div className="h-64 rounded-xl border border-border bg-card animate-pulse" />
+        </div>
+      </div>
+    );
   }
 
   const thisWeekApplications = countWithinDays(applications, 7);
@@ -260,7 +275,7 @@ const DashboardHome = () => {
     .slice(0, 5);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <input
         ref={fileInputRef}
         type="file"
@@ -274,7 +289,7 @@ const DashboardHome = () => {
         matchScore={stats.student.matchScore}
         improvementText={`${thisWeekApplications} application${thisWeekApplications === 1 ? "" : "s"} this week`}
         onUploadResume={handleUploadResume}
-        onAddSkills={() => navigate("/profile")}
+        onAddSkills={() => navigate("/student/profile")}
       />
 
       <ProfileCompletion value={profile.profileCompletion} />
@@ -283,32 +298,32 @@ const DashboardHome = () => {
         <StatsCard
           title="Applications"
           value={stats.student.applicationsSubmitted}
-          icon={<FileText className="h-4 w-4" />}
+          icon={<ListTodo className="h-4 w-4 stroke-[1.65]" />}
           trend={`${thisWeekApplications} this week`}
         />
         <StatsCard
           title="Interviews"
           value={stats.student.interviewsScheduled}
-          icon={<Star className="h-4 w-4" />}
+          icon={<Mic className="h-4 w-4 stroke-[1.65]" />}
           trend={`${applications.filter((a) => a.status === "Interview").length} in pipeline`}
         />
         <StatsCard
           title="Profile Views"
           value={stats.student.profileViews}
-          icon={<Search className="h-4 w-4" />}
+          icon={<Eye className="h-4 w-4 stroke-[1.65]" />}
           trend="Total recruiter views"
         />
         <StatsCard
           title="Match Score"
           value={`${stats.student.matchScore}%`}
-          icon={<TrendingUp className="h-4 w-4" />}
+          icon={<Percent className="h-4 w-4 stroke-[1.65]" />}
           trend="Average across applications"
         />
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <section className="glass-card rounded-lg p-5 space-y-4">
-          <h3 className="font-semibold text-foreground">Application Progress</h3>
+        <section className="glass-card space-y-4 rounded-xl p-5">
+          <h3 className="font-display font-semibold text-foreground">Application progress</h3>
           <div className="space-y-2">
             {statusSummary.map((item) => (
               <div
@@ -334,13 +349,13 @@ const DashboardHome = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <section className="glass-card rounded-lg p-5 space-y-4">
+        <section className="glass-card space-y-4 rounded-xl p-5">
           <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-foreground">Recent Applications</h3>
+            <h3 className="font-display font-semibold text-foreground">Recent applications</h3>
             <Button
               size="sm"
               variant="outline"
-              onClick={() => navigate("/applications")}
+              onClick={() => navigate("/student/applications")}
             >
               View all
             </Button>
@@ -393,7 +408,7 @@ const DashboardHome = () => {
               {trendingSkills.length > 0 ? (
                 trendingSkills.map((skill) => (
                   <Badge key={skill} variant="outline">
-                    <Briefcase className="mr-1 h-3 w-3" />
+                    <Tag className="mr-1 h-3 w-3 stroke-[1.75]" />
                     {skill}
                   </Badge>
                 ))

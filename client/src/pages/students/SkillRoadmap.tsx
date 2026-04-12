@@ -7,7 +7,7 @@ import RecommendedCourseCard from "@/components/student/RecommendedCourseCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Sparkles, X } from "lucide-react";
+import { Loader2, Footprints, X } from "lucide-react";
 import {
   studentPortalService,
   type StudentCourse,
@@ -165,7 +165,7 @@ const SkillRoadmap = () => {
     <div className="space-y-6">
       <div className="glass-card rounded-lg p-5 space-y-4">
         <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
+          <Footprints className="h-4 w-4 stroke-[1.65] text-primary" />
           <h3 className="font-semibold text-foreground">Choose Your Interest Fields</h3>
         </div>
 

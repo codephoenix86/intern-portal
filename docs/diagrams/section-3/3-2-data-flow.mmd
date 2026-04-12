@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph extEntities [External Entities]
+        student[Student]
+        staff[Mentor Recruiter Admin]
+        webJobs[Internshala And Seed Data]
+    end
+    subgraph processes [Processes]
+        pAuth[User Authentication]
+        pProfile[Profile And Skill Management]
+        pMatch[Skill Matching And Recommendations]
+        pIntern[Internship Discovery And Application]
+        pCourse[Course Discovery And Enrollment]
+    end
+    subgraph dataStores [Data Stores]
+        dUsers[(Users And Auth State)]
+        dJobs[(Jobs Applications)]
+        dCourses[(Courses Enrollments)]
+    end
+    student -->|login register OAuth| pAuth
+    staff -->|login register OAuth| pAuth
+    pAuth -->|sessions user records| dUsers
+    student -->|update skills resume| pProfile
+    staff -->|directory profiles| pProfile
+    pProfile -->|user skill vectors| dUsers
+    student -->|request matches| pMatch
+    dUsers -->|student skills| pMatch
+    dJobs -->|required skills| pMatch
+    dCourses -->|skills taught| pMatch
+    pMatch -->|ranked jobs courses| student
+    webJobs -->|scraped or static listings| pIntern
+    student -->|search filter apply| pIntern
+    pIntern -->|applications status| dJobs
+    student -->|browse enroll track| pCourse
+    pCourse -->|enrollment progress| dCourses
+    dCourses -->|catalog| pCourse

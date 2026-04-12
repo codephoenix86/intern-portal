@@ -2,7 +2,7 @@
 
 import { Routes, Route } from "react-router-dom";
 import DashboardLayout from "@/components/DashboardLayout";
-import { RECRUITER_SIDEBAR_ITEMS } from "@/constants/recruiter.sidebar";
+import { RECRUITER_SIDEBAR_SECTIONS } from "@/constants/recruiter.sidebar";
 
 import Overview from "./Overview";
 import PostInternship from "./PostInternship";
@@ -17,7 +17,7 @@ const RecruiterDashboard = () => {
         path="/"
         element={
           <DashboardLayout
-            sidebarItems={RECRUITER_SIDEBAR_ITEMS}
+            sections={RECRUITER_SIDEBAR_SECTIONS}
             role="recruiter"
             title="Overview"
           >
@@ -30,7 +30,7 @@ const RecruiterDashboard = () => {
         path="/post"
         element={
           <DashboardLayout
-            sidebarItems={RECRUITER_SIDEBAR_ITEMS}
+            sections={RECRUITER_SIDEBAR_SECTIONS}
             role="recruiter"
             title="Post Internship"
           >
@@ -43,7 +43,7 @@ const RecruiterDashboard = () => {
         path="/listings"
         element={
           <DashboardLayout
-            sidebarItems={RECRUITER_SIDEBAR_ITEMS}
+            sections={RECRUITER_SIDEBAR_SECTIONS}
             role="recruiter"
             title="My Listings"
           >
@@ -56,7 +56,7 @@ const RecruiterDashboard = () => {
         path="/applicants"
         element={
           <DashboardLayout
-            sidebarItems={RECRUITER_SIDEBAR_ITEMS}
+            sections={RECRUITER_SIDEBAR_SECTIONS}
             role="recruiter"
             title="Applicants"
           >
@@ -69,7 +69,7 @@ const RecruiterDashboard = () => {
         path="/notifications"
         element={
           <DashboardLayout
-            sidebarItems={RECRUITER_SIDEBAR_ITEMS}
+            sections={RECRUITER_SIDEBAR_SECTIONS}
             role="recruiter"
             title="Notifications"
           >
@@ -82,7 +82,7 @@ const RecruiterDashboard = () => {
         path="/settings"
         element={
           <DashboardLayout
-            sidebarItems={RECRUITER_SIDEBAR_ITEMS}
+            sections={RECRUITER_SIDEBAR_SECTIONS}
             role="recruiter"
             title="Settings"
           >

@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { AxiosError } from "axios";
 import type { UserRole } from "@/types/auth.types";
+import { APP_DISPLAY_NAME } from "@/constants/brand";
 
 interface RegisterFormProps {
   onRoleChange?: (role: UserRole) => void;
@@ -58,7 +59,7 @@ const RegisterForm = ({ onRoleChange }: RegisterFormProps) => {
 
       toast({
         title: "Account Created! 🎉",
-        description: `Welcome to InternPortal, ${name}!`,
+        description: `Welcome to ${APP_DISPLAY_NAME}, ${name}!`,
       });
 
       navigate(getRoleRedirect(role), { replace: true });

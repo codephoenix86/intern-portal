@@ -6,19 +6,6 @@ import type {
   Message,
 } from "@/types/mentor.types";
 
-// ── Sidebar Labels + Routes (no icons here) ──────────────────
-export const SIDEBAR_ROUTES = [
-  { to: "/mentor", label: "Dashboard" },
-  { to: "/mentor/courses", label: "Courses" },
-  { to: "/mentor/trainings", label: "Skill Trainings" },
-  { to: "/mentor/classes", label: "Classes" },
-  { to: "/mentor/students", label: "Students" },
-  { to: "/mentor/assignments", label: "Assignments" },
-  { to: "/mentor/progress", label: "Progress" },
-  { to: "/mentor/messages", label: "Messages" },
-  { to: "/mentor/settings", label: "Settings" },
-] as const;
-
 // ── Mock Data ────────────────────────────────────────────────
 export const MOCK_TRAININGS: Training[] = [
   {

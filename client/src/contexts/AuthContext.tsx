@@ -77,6 +77,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } catch {
           /* keep raw */
         }
+        if (description === "oauth_failed") {
+          description =
+            "Google sign-in failed. Check API server logs and Google OAuth settings (redirect URI, client ID/secret).";
+        }
         toast({
           title: "Authentication failed",
           description,

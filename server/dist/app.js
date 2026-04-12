@@ -15,6 +15,7 @@ import publicRecruitersRoutes from "./routes/public-recruiters.routes.js";
 import publicMentorsRoutes from "./routes/public-mentors.routes.js";
 import connectionRoutes from "./routes/connection.routes.js";
 import matchRoutes from "./routes/match.routes.js";
+import { ENV } from "./config/env.js";
 const app = express();
 // Ensure uploads dirs exist even if deleted manually.
 const uploadsDir = path.join(process.cwd(), "uploads");
@@ -61,6 +62,26 @@ app.use("/uploads", (req, res, next) => {
     });
 });
 // ── API Routes ───────────────────────────────────────
+// Dev: If the browser uses 127.0.0.1 for the API but GOOGLE_REDIRECT_URI uses
+// localhost, OAuth cookies are set on 127.0.0.1 while Google sends the user to
+// localhost — cookies are missing on callback. Normalize to localhost.
+let googleOAuthCallbackHost = "";
+if (ENV.NODE_ENV !== "production") {
+    try {
+        googleOAuthCallbackHost = new URL(ENV.GOOGLE_REDIRECT_URI).hostname;
+    }
+    catch {
+        googleOAuthCallbackHost = "";
+    }
+    app.use("/api/auth", (req, res, next) => {
+        if (req.hostname === "127.0.0.1" && googleOAuthCallbackHost === "localhost") {
+            const pathAndQuery = req.originalUrl || req.url;
+            res.redirect(302, `http://localhost:${ENV.PORT}${pathAndQuery}`);
+            return;
+        }
+        next();
+    });
+}
 app.use("/api/auth", authRoutes);
 app.use("/api/mentor", mentorRoutes);
 app.use("/api/sessions", sessionRoutes);

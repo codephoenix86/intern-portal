@@ -14,16 +14,16 @@ const startServer = async (): Promise<void> => {
     console.log(`Health: http://localhost:${ENV.PORT}/health`);
     console.log("========================================");
 
-    // 1. Connect to MongoDB
-    await connectDB();
-
-    // 2. Start Express server
+    // Listen immediately so OAuth and health checks work even if MongoDB is slow/unreachable.
+    // DB-dependent routes still need a successful connection (connect runs in background).
     app.listen(ENV.PORT, () => {
       const uptimeMs = Date.now() - startedAt.getTime();
       console.log("Server ready.");
       console.log(`Listening: http://localhost:${ENV.PORT}`);
       console.log(`Uptime (boot): ${uptimeMs}ms`);
     });
+
+    void connectDB();
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1);

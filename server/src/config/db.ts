@@ -14,7 +14,9 @@ const connectDB = async (): Promise<void> => {
     console.log(`[db] connected host=${conn.connection.host} db=${conn.connection.name}`);
   } catch (error) {
     console.error("[db] connection error:", error);
-    process.exit(1);
+    if (ENV.NODE_ENV === "production") {
+      process.exit(1);
+    }
   }
 };
 

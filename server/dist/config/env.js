@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
-dotenv.config();
+// Non-production: `.env` overrides pre-set shell/IDE variables so local edits
+// (e.g. CLIENT_URL matching Vite) are not ignored — dotenv default skips existing keys.
+dotenv.config({ override: process.env.NODE_ENV !== "production" });
 const getEnv = (key, fallback) => {
     const value = process.env[key] ?? fallback;
     if (!value) {

@@ -37,4 +37,10 @@ export declare const updateStudentProfileSchema: z.ZodObject<{
 export declare const parseResumeBodySchema: z.ZodObject<{
     fileUrl: z.ZodString;
 }, z.core.$strip>;
+export declare const catalogCourseListQuerySchema: z.ZodObject<{
+    keyword: z.ZodOptional<z.ZodString>;
+    category: z.ZodOptional<z.ZodString>;
+    page: z.ZodDefault<z.ZodOptional<z.ZodCoercedNumber<unknown>>>;
+    limit: z.ZodDefault<z.ZodOptional<z.ZodCoercedNumber<unknown>>>;
+}, z.core.$strip>;
 //# sourceMappingURL=student.validator.d.ts.map

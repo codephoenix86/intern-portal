@@ -13,7 +13,9 @@ const connectDB = async () => {
     }
     catch (error) {
         console.error("[db] connection error:", error);
-        process.exit(1);
+        if (ENV.NODE_ENV === "production") {
+            process.exit(1);
+        }
     }
 };
 // Connection event listeners

@@ -1,8 +1,45 @@
 import type { Request, Response } from "express";
+import {
+  ArcticFetchError,
+  OAuth2RequestError,
+  UnexpectedResponseError,
+} from "arctic";
 import { googleOAuthService } from "../services/google-oauth.service.js";
 import { AppError } from "../services/auth.service.js";
 import { sendError } from "../utils/response.utils.js";
 import { ENV } from "../config/env.js";
+
+const redirectLoginError = (res: Response, message: string): void => {
+  res.redirect(
+    `${ENV.CLIENT_URL}/login?error=${encodeURIComponent(message.slice(0, 400))}`,
+  );
+};
+
+const isMongoUnavailableError = (error: unknown): boolean => {
+  if (!(error instanceof Error)) return false;
+  return (
+    error.name === "MongoServerSelectionError" ||
+    error.name === "MongoNotConnectedError" ||
+    error.message.includes("buffering timed out") ||
+    error.message.includes("not connected to MongoDB")
+  );
+};
+
+const oauth2UserMessage = (err: OAuth2RequestError): string => {
+  const code = err.code;
+  const fromGoogle = err.description?.trim();
+  if (fromGoogle) return fromGoogle;
+  if (code === "redirect_uri_mismatch") {
+    return `Google redirect URI mismatch. In Google Cloud Console → Credentials → your OAuth client, add this exact Authorized redirect URI: ${ENV.GOOGLE_REDIRECT_URI}`;
+  }
+  if (code === "invalid_client") {
+    return "Google rejected the client credentials. Check GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in server .env.";
+  }
+  if (code === "invalid_grant") {
+    return "Sign-in expired or the code was already used. Please try Continue with Google again.";
+  }
+  return err.message || "Google token exchange failed.";
+};
 
 // ── Cookie Options (reuse from auth controller) ──────
 const isProd = ENV.NODE_ENV === "production";
@@ -71,7 +108,14 @@ export const initiateGoogleAuth = (req: Request, res: Response): void => {
     res.redirect(url);
   } catch (error) {
     console.error("Google OAuth initiate error:", error);
-    res.redirect(`${ENV.CLIENT_URL}/login?error=oauth_failed`);
+    if (error instanceof OAuth2RequestError) {
+      redirectLoginError(res, oauth2UserMessage(error));
+      return;
+    }
+    redirectLoginError(
+      res,
+      "Could not start Google sign-in. Check server logs and Google OAuth configuration.",
+    );
   }
 };
 
@@ -168,12 +212,43 @@ export const googleCallback = async (
     console.error("Google OAuth callback error:", error);
 
     if (error instanceof AppError) {
-      const encodedMessage = encodeURIComponent(error.message);
-      res.redirect(`${ENV.CLIENT_URL}/login?error=${encodedMessage}`);
+      redirectLoginError(res, error.message);
       return;
     }
 
-    res.redirect(`${ENV.CLIENT_URL}/login?error=oauth_failed`);
+    if (error instanceof OAuth2RequestError) {
+      redirectLoginError(res, oauth2UserMessage(error));
+      return;
+    }
+
+    if (error instanceof ArcticFetchError) {
+      redirectLoginError(
+        res,
+        "Could not reach Google (network error). Check your connection and try again.",
+      );
+      return;
+    }
+
+    if (error instanceof UnexpectedResponseError) {
+      redirectLoginError(
+        res,
+        `Google returned an unexpected response (HTTP ${error.status}). Try again later.`,
+      );
+      return;
+    }
+
+    if (isMongoUnavailableError(error)) {
+      redirectLoginError(
+        res,
+        "Database is not connected. Start MongoDB, confirm MONGODB_URI in server .env, then try Google sign-in again.",
+      );
+      return;
+    }
+
+    redirectLoginError(
+      res,
+      "Google sign-in failed for an unexpected reason. See the API server console log for details.",
+    );
   }
 };
 

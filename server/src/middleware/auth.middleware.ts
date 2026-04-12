@@ -3,10 +3,8 @@ import { verifyAccessToken } from "../utils/token.utils.js";
 import { sendError } from "../utils/response.utils.js";
 
 /**
- * Middleware to verify JWT access token
- * Token can be in:
- *   1. Authorization header: "Bearer <token>"
- *   2. Cookie: "accessToken"
+ * Middleware to verify JWT access token.
+ * Allows users with null role (they just can't pass authorize).
  */
 export const authenticate = (
   req: Request,
@@ -39,7 +37,7 @@ export const authenticate = (
     req.user = {
       userId: decoded.userId,
       email: decoded.email,
-      role: decoded.role,
+      role: decoded.role, // Can be null for OAuth users without role
     };
 
     next();
@@ -49,7 +47,8 @@ export const authenticate = (
 };
 
 /**
- * Middleware to restrict access to specific roles
+ * Middleware to restrict access to specific roles.
+ * Users with null role will always be rejected.
  */
 export const authorize = (
   ...roles: Array<"student" | "mentor" | "recruiter">
@@ -57,6 +56,16 @@ export const authorize = (
   return (req: Request, res: Response, next: NextFunction): void => {
     if (!req.user) {
       sendError(res, 401, "Authentication required");
+      return;
+    }
+
+    // Null role means user hasn't selected a role yet
+    if (!req.user.role) {
+      sendError(
+        res,
+        403,
+        "Please select a role before accessing this resource",
+      );
       return;
     }
 

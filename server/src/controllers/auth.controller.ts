@@ -5,6 +5,7 @@ import { authService, AppError } from "../services/auth.service.js";
 import { sendSuccess, sendError } from "../utils/response.utils.js";
 import { ENV } from "../config/env.js";
 import { User } from "../models/user.model.js";
+import { z } from "zod";
 
 // ── Cookie Options ───────────────────────────────────
 const REFRESH_TOKEN_COOKIE_OPTIONS = {
@@ -211,7 +212,8 @@ const tryDeleteLocalAvatar = (avatarUrlOrPath: string | null): void => {
     if (!avatarUrlOrPath.startsWith("/uploads/avatars/")) return;
 
     const relative = avatarUrlOrPath.replace(/^\/uploads\/avatars\//, "");
-    if (!relative || relative.includes("..") || path.isAbsolute(relative)) return;
+    if (!relative || relative.includes("..") || path.isAbsolute(relative))
+      return;
 
     const filePath = path.join(process.cwd(), "uploads", "avatars", relative);
     if (fs.existsSync(filePath)) {
@@ -267,7 +269,10 @@ export const uploadMyAvatar = async (
 };
 
 // ── GET MY AVATAR (redirect to static URL) ────────────
-export const getMyAvatar = async (req: Request, res: Response): Promise<void> => {
+export const getMyAvatar = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     if (!req.user) {
       sendError(res, 401, "Authentication required");
@@ -289,5 +294,79 @@ export const getMyAvatar = async (req: Request, res: Response): Promise<void> =>
   } catch (error) {
     console.error("Get avatar error:", error);
     sendError(res, 500, "Internal server error");
+  }
+};
+
+// ── SELECT ROLE (for OAuth users who haven't chosen a role) ──
+const selectRoleSchema = z.object({
+  role: z.enum(["student", "mentor", "recruiter"]),
+});
+
+export const selectRole = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      sendError(res, 401, "Authentication required");
+      return;
+    }
+
+    // Parse and validate body
+    const parsed = selectRoleSchema.safeParse(req.body);
+    if (!parsed.success) {
+      sendError(
+        res,
+        400,
+        "Invalid role. Must be student, mentor, or recruiter.",
+      );
+      return;
+    }
+
+    // Find the user
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      sendError(res, 404, "User not found");
+      return;
+    }
+
+    // Only allow role selection if role is currently null
+    if (user.role !== null) {
+      sendError(
+        res,
+        400,
+        "Role has already been selected. Cannot change role.",
+      );
+      return;
+    }
+
+    // Update role
+    user.role = parsed.data.role;
+    await user.save();
+
+    // Re-issue tokens with the new role
+    const meta = {
+      ip: req.clientIp ?? req.ip ?? null,
+      userAgent: req.headers["user-agent"] ?? null,
+    };
+    const tokens = await authService.generateTokenPair(user, meta);
+
+    // Set new cookies
+    res.cookie("accessToken", tokens.accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
+    res.cookie(
+      "refreshToken",
+      tokens.refreshToken,
+      REFRESH_TOKEN_COOKIE_OPTIONS,
+    );
+
+    const userObj = user.toJSON();
+
+    sendSuccess(res, 200, "Role selected successfully", {
+      user: userObj,
+      accessToken: tokens.accessToken,
+    });
+  } catch (error) {
+    console.error("Select role error:", error);
+    sendError(res, 500, "Failed to select role");
   }
 };

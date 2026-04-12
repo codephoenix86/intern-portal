@@ -6,7 +6,7 @@ import { authService, AppError, type TokenPair } from "./auth.service.js";
 // ── Types ────────────────────────────────────────────
 
 interface GoogleUserInfo {
-  sub: string; // Google user ID
+  sub: string;
   name: string;
   given_name: string;
   family_name: string;
@@ -29,10 +29,6 @@ interface SessionMeta {
 // ── Service Class ────────────────────────────────────
 
 class GoogleOAuthService {
-  /**
-   * Step 1: Generate authorization URL
-   * Returns URL + state + codeVerifier to store in cookie
-   */
   createAuthorizationURL(): {
     url: string;
     state: string;
@@ -54,10 +50,6 @@ class GoogleOAuthService {
     };
   }
 
-  /**
-   * Step 2: Exchange authorization code for tokens
-   * and fetch Google user profile
-   */
   async handleCallback(
     code: string,
     codeVerifier: string,
@@ -85,35 +77,33 @@ class GoogleOAuthService {
 
     if (user) {
       // ── Existing User ──────────────────────────────
-      // Update provider info if they haven't linked Google yet
       if (user.provider === "local") {
         user.provider = "google";
         user.providerId = googleUser.sub;
       }
 
-      // Update avatar if not set
       if (!user.avatar && googleUser.picture) {
         user.avatar = googleUser.picture;
       }
 
-      // Update last login
       user.lastLoginAt = new Date();
       user.lastLoginIp = meta.ip;
       await user.save();
     } else {
       // ── New User ───────────────────────────────────
-      // Role must be provided for new OAuth users
-      const userRole = role ?? "student"; // Default to student if no role specified
+      // If role is provided (from register page), use it.
+      // If not (from login page), set to null — user must select role.
+      const userRole = role ?? null; // ← CHANGED: null instead of "student"
 
       user = await User.create({
         name: googleUser.name,
         email: googleUser.email,
-        password: null, // OAuth users have no password
-        role: userRole,
+        password: null,
+        role: userRole, // Can be null
         avatar: googleUser.picture ?? null,
         provider: "google",
         providerId: googleUser.sub,
-        isVerified: true, // Google email is verified
+        isVerified: true,
         isActive: true,
         lastLoginAt: new Date(),
         lastLoginIp: meta.ip,
@@ -143,9 +133,6 @@ class GoogleOAuthService {
     };
   }
 
-  /**
-   * Fetch Google user profile using access token
-   */
   private async fetchGoogleUser(accessToken: string): Promise<GoogleUserInfo> {
     const response = await fetch(
       "https://www.googleapis.com/oauth2/v3/userinfo",
@@ -165,5 +152,4 @@ class GoogleOAuthService {
   }
 }
 
-// ── Export Singleton ──────────────────────────────────
 export const googleOAuthService = new GoogleOAuthService();

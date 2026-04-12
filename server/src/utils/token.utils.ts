@@ -6,7 +6,7 @@ import { ENV } from "../config/env.js";
 export interface AccessTokenPayload {
   userId: string;
   email: string;
-  role: "student" | "mentor" | "recruiter";
+  role: "student" | "mentor" | "recruiter" | null; // ← CHANGED: allow null
 }
 
 export interface RefreshTokenPayload {
@@ -16,9 +16,6 @@ export interface RefreshTokenPayload {
 
 // ── Access Token ─────────────────────────────────────
 
-/**
- * Generate a short-lived access token (15 min)
- */
 export const generateAccessToken = (payload: AccessTokenPayload): string => {
   const accessTokenExpiry = ENV.ACCESS_TOKEN_EXPIRY as NonNullable<
     SignOptions["expiresIn"]
@@ -29,18 +26,12 @@ export const generateAccessToken = (payload: AccessTokenPayload): string => {
   return jwt.sign(payload, ENV.ACCESS_TOKEN_SECRET as string, options);
 };
 
-/**
- * Verify and decode an access token
- */
 export const verifyAccessToken = (token: string): AccessTokenPayload => {
   return jwt.verify(token, ENV.ACCESS_TOKEN_SECRET) as AccessTokenPayload;
 };
 
 // ── Refresh Token ────────────────────────────────────
 
-/**
- * Generate a long-lived refresh token (7 days)
- */
 export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
   const refreshTokenExpiry = ENV.REFRESH_TOKEN_EXPIRY as NonNullable<
     SignOptions["expiresIn"]
@@ -51,9 +42,6 @@ export const generateRefreshToken = (payload: RefreshTokenPayload): string => {
   return jwt.sign(payload, ENV.REFRESH_TOKEN_SECRET as string, options);
 };
 
-/**
- * Verify and decode a refresh token
- */
 export const verifyRefreshToken = (token: string): RefreshTokenPayload => {
   return jwt.verify(
     token,
@@ -63,19 +51,12 @@ export const verifyRefreshToken = (token: string): RefreshTokenPayload => {
 
 // ── Utility ──────────────────────────────────────────
 
-/**
- * Generate unique token ID for refresh token tracking
- */
 export const generateTokenId = (): string => {
   return crypto.randomUUID();
 };
 
-/**
- * Calculate refresh token expiry date
- */
 export const getRefreshTokenExpiry = (): Date => {
   const expiry = new Date();
-  // Parse '7d' -> 7 days
   const match = ENV.REFRESH_TOKEN_EXPIRY.match(/^(\d+)([dhms])$/);
   if (match) {
     const value = parseInt(match[1] ?? "7");
@@ -95,7 +76,6 @@ export const getRefreshTokenExpiry = (): Date => {
         break;
     }
   } else {
-    // Default: 7 days
     expiry.setDate(expiry.getDate() + 7);
   }
   return expiry;

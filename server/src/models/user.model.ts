@@ -6,7 +6,7 @@ export interface IUser {
   name: string;
   email: string;
   password: string | null; // null for OAuth users
-  role: "student" | "mentor" | "recruiter";
+  role: "student" | "mentor" | "recruiter" | null;
   avatar: string | null;
   provider: "local" | "google" | "github";
   providerId: string | null;
@@ -86,7 +86,7 @@ const userSchema = new Schema<IUser>(
     role: {
       type: String,
       enum: ["student", "mentor", "recruiter"],
-      required: true,
+      default: null, // null for OAuth users who haven't selected a role yet
     },
     avatar: {
       type: String,

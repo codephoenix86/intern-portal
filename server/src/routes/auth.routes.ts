@@ -8,6 +8,7 @@ import {
   getMe,
   uploadMyAvatar,
   getMyAvatar,
+  selectRole, // ← ADD
 } from "../controllers/auth.controller.js";
 import { validate } from "../middleware/validate.middleware.js";
 import { authenticate } from "../middleware/auth.middleware.js";
@@ -27,6 +28,9 @@ router.post("/refresh", refreshToken);
 // Google OAuth2.0
 router.get("/google", initiateGoogleAuth);
 router.get("/google/callback", googleCallback);
+
+// Role selection (for OAuth users without a role)
+router.post("/select-role", authenticate, selectRole); // ← ADD (authenticate but NO authorize)
 
 router.post("/logout", logout);
 router.post("/logout-all", authenticate, logoutAll);

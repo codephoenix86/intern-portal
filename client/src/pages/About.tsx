@@ -93,33 +93,33 @@ const values: ValueItem[] = [
 
 const team: TeamMember[] = [
   {
-    name: "Aarav Sharma",
-    role: "Founder & CEO",
+    name: "Ankit Kumar Sharma",
+    role: "Full Stack Developer",
     avatar: "/images/team/aarav.png",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
+    github: "https://github.com/ankitsharma34",
+    linkedin: "https://www.linkedin.com/in/sharmankit04/",
     twitter: "https://twitter.com",
   },
   {
-    name: "Anjali Verma",
-    role: "CTO & AI Lead",
+    name: "Prakhar Srivastava",
+    role: "Full Stack Developer",
     avatar: "/images/team/anjali.png",
     github: "https://github.com",
     linkedin: "https://linkedin.com",
   },
   {
-    name: "Rohan Gupta",
-    role: "Head of Product",
+    name: "Swati",
+    role: "Full Stack Developer",
     avatar: "/images/team/rohan.png",
     linkedin: "https://linkedin.com",
     twitter: "https://twitter.com",
   },
   {
-    name: "Neha Singh",
-    role: "Lead Designer",
+    name: "Krishnkant Lohar",
+    role: "Full Stack Developer",
     avatar: "/images/team/neha.png",
-    github: "https://github.com",
-    linkedin: "https://linkedin.com",
+    github: "https://github.com/codephoenix86",
+    linkedin: "https://www.linkedin.com/in/nareshlohar86/",
   },
 ];
 
@@ -363,8 +363,8 @@ const TeamSection = () => (
           Meet the Team
         </h2>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          A passionate group of engineers, designers, and educators working to
-          reshape the internship experience.
+          A passionate group of full stack developers working to reshape the
+          internship experience.
         </p>
       </div>
 

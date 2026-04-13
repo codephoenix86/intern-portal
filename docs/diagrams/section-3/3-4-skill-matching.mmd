@@ -1,0 +1,20 @@
+flowchart TB
+    subgraph inputs [Input collection]
+        A[Student skills from user profile]
+        B[Internship required skills from Job record]
+    end
+    subgraph compare [Comparison and scoring]
+        C[Align and compare skill sets per endpoint rules]
+        D[Compute match percentage]
+    end
+    subgraph results [Outputs]
+        E[Matched skills]
+        F[Missing skills]
+        G[Rank filter or display score]
+    end
+    A --> C
+    B --> C
+    C --> D
+    D --> E
+    D --> F
+    D --> G

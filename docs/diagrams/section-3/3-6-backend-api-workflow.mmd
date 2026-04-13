@@ -1,0 +1,28 @@
+flowchart TB
+    subgraph fe [Frontend React]
+        UI[Student views e.g. internship detail]
+        AX[Axios client baseURL /api]
+    end
+    subgraph ex [Express application tier]
+        RT[match.routes mounts under /api]
+        CTL[match.controller getMatch getSuggestions]
+        subgraph svc [match.service]
+            CALC[calculateMatch or findMissingSkills]
+            SUG[suggestCourses]
+        end
+    end
+    subgraph db [MongoDB via Mongoose]
+        MU[(User collection)]
+        MJ[(Job collection)]
+        MC[(Course collection)]
+    end
+    UI -->|GET /match or /suggestions :ids| AX
+    AX --> RT
+    RT --> CTL
+    CTL -->|User.findById student| MU
+    CTL -->|Job.findById internship| MJ
+    CTL --> CALC
+    CALC -->|suggestions route only| SUG
+    SUG -->|published courses by skill overlap| MC
+    CTL -->|JSON success and data payload| AX
+    AX --> UI

@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph inputs [Inputs]
+        M[Missing skills for student and internship pair]
+    end
+    subgraph fetch [Course retrieval]
+        N[Find published courses whose skill tags intersect missing skills]
+    end
+    subgraph shape [Response shaping]
+        O[Map to course id title and link slug]
+    end
+    subgraph ui [Student experience]
+        P[API returns JSON to client]
+        Q[Internship detail and related views list suggested courses]
+    end
+    M --> N
+    N --> O
+    O --> P
+    P --> Q
